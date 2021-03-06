@@ -1,0 +1,353 @@
+
+state 0:
+
+	START : . F1 
+	START : .  (reduce by rule 1)
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	F1	goto 4
+	F2	goto 3
+	F3	goto 2
+	F4	goto 1
+	START	goto 28
+
+	.	reduce by rule 1
+
+
+state 1:
+
+	F3 : F4 .  (reduce by rule 10)
+
+
+
+	.	reduce by rule 10
+
+
+state 2:
+
+	F2 : F3 . IMPLIES F2 
+	F2 : F3 .  (reduce by rule 5)
+	F3 : F3 . AND F4 
+	F3 : F3 . OR F4 
+	F3 : F3 . XOR F4 
+	F3 : F3 . EQUALS F4 
+
+	IMPLIES	shift 14
+	AND	shift 13
+	OR	shift 12
+	XOR	shift 11
+	EQUALS	shift 10
+
+
+	.	reduce by rule 5
+
+
+state 3:
+
+	F1 : F2 .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 4:
+
+	START : F1 .  (reduce by rule 0)
+
+
+
+	.	reduce by rule 0
+
+
+state 5:
+
+	F4 : LPAREN . F1 RPAREN 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	F1	goto 15
+	F2	goto 3
+	F3	goto 2
+	F4	goto 1
+
+	.	error
+
+
+state 6:
+
+	F1 : IF . F2 THEN F1 ELSE F1 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F2	goto 16
+	F3	goto 2
+	F4	goto 1
+
+	.	error
+
+
+state 7:
+
+	F4 : NOT . F4 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F4	goto 17
+
+	.	error
+
+
+state 8:
+
+	F4 : CONST .  (reduce by rule 12)
+
+
+
+	.	reduce by rule 12
+
+
+state 9:
+
+	F4 : ID .  (reduce by rule 11)
+
+
+
+	.	reduce by rule 11
+
+
+state 10:
+
+	F3 : F3 EQUALS . F4 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F4	goto 18
+
+	.	error
+
+
+state 11:
+
+	F3 : F3 XOR . F4 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F4	goto 19
+
+	.	error
+
+
+state 12:
+
+	F3 : F3 OR . F4 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F4	goto 20
+
+	.	error
+
+
+state 13:
+
+	F3 : F3 AND . F4 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F4	goto 21
+
+	.	error
+
+
+state 14:
+
+	F2 : F3 IMPLIES . F2 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	F2	goto 22
+	F3	goto 2
+	F4	goto 1
+
+	.	error
+
+
+state 15:
+
+	F4 : LPAREN F1 . RPAREN 
+
+	RPAREN	shift 23
+
+
+	.	error
+
+
+state 16:
+
+	F1 : IF F2 . THEN F1 ELSE F1 
+
+	THEN	shift 24
+
+
+	.	error
+
+
+state 17:
+
+	F4 : NOT F4 .  (reduce by rule 14)
+
+
+
+	.	reduce by rule 14
+
+
+state 18:
+
+	F3 : F3 EQUALS F4 .  (reduce by rule 9)
+
+
+
+	.	reduce by rule 9
+
+
+state 19:
+
+	F3 : F3 XOR F4 .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
+state 20:
+
+	F3 : F3 OR F4 .  (reduce by rule 7)
+
+
+
+	.	reduce by rule 7
+
+
+state 21:
+
+	F3 : F3 AND F4 .  (reduce by rule 6)
+
+
+
+	.	reduce by rule 6
+
+
+state 22:
+
+	F2 : F3 IMPLIES F2 .  (reduce by rule 4)
+
+
+
+	.	reduce by rule 4
+
+
+state 23:
+
+	F4 : LPAREN F1 RPAREN .  (reduce by rule 13)
+
+
+
+	.	reduce by rule 13
+
+
+state 24:
+
+	F1 : IF F2 THEN . F1 ELSE F1 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	F1	goto 25
+	F2	goto 3
+	F3	goto 2
+	F4	goto 1
+
+	.	error
+
+
+state 25:
+
+	F1 : IF F2 THEN F1 . ELSE F1 
+
+	ELSE	shift 26
+
+
+	.	error
+
+
+state 26:
+
+	F1 : IF F2 THEN F1 ELSE . F1 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	F1	goto 27
+	F2	goto 3
+	F3	goto 2
+	F4	goto 1
+
+	.	error
+
+
+state 27:
+
+	F1 : IF F2 THEN F1 ELSE F1 .  (reduce by rule 2)
+
+
+
+	.	reduce by rule 2
+
+
+state 28:
+
+
+	EOF	accept
+
+
+	.	error
+
+23 of 86 action table entries left after compaction
+28 goto table entries
