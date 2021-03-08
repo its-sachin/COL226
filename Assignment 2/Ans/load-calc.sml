@@ -20,7 +20,6 @@ fun readFile infile =
 	lexer
     end
 
-val list = []	
 		
 fun parse (lexer) =
     let val dummyEOF = BoolLrVals.Tokens.EOF(0,0)

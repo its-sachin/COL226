@@ -1,6 +1,9 @@
 structure Tokens= Tokens
   
   type pos = int
+  type svalue = Tokens.svalue
+  type ('a,'b) token = ('a,'b) Tokens.token  
+  type lexresult = (svalue, pos) token
 
   val pos = ref 0
   val eof = fn () => Tokens.EOF(!pos, !pos)

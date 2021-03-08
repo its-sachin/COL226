@@ -12,7 +12,6 @@ struct
 fun constVal "True" = 1
     | constVal s = 0
 
-val postOrder = []
 
 
 end
