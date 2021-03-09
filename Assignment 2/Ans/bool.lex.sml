@@ -5,19 +5,21 @@ functor BoolLexFun(structure Tokens:Bool_TOKENS)=
 structure Tokens= Tokens
   
   type pos = int
+  type line = int
   type svalue = Tokens.svalue
   type ('a,'b) token = ('a,'b) Tokens.token  
   type lexresult = (svalue, pos) token
 
   val pos = ref 0
+  val line = ref 0;
   val eof = fn () => Tokens.EOF(!pos, !pos)
-  val error = fn (e, l:int, _) => TextIO.output(TextIO.stdOut,"line " ^ (Int.toString l) ^ ": " ^ e ^ "\n")
+  fun error(s:string,a:int, b:int) = TextIO.output(TextIO.stdOut,"Unknown token:"^(Int.toString(a))^":"^(Int.toString(b))^":"^s^ "\n")
 
-  fun revfold _ nil b = b
-  | revfold f (hd::tl) b = revfold f tl (f(hd,b))
+  fun inc(pos,num) = pos := (!pos) + num;
 
-  val say = fn s => TextIO.output(TextIO.stdOut,s)
-  val list = []
+  val list = ref "["
+  fun update(s,a) = list := !list^s^" \""^a^"\""^",";
+
   
 end (* end of user routines *)
 exception LexError (* raised if illegal leaf action tried *)
@@ -41,31 +43,31 @@ val s = [
 \\000"
 ),
  (1, 
-"\000\000\000\000\000\000\000\000\000\008\009\000\000\000\000\000\
-\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\008\000\000\000\000\000\000\000\007\006\000\000\000\000\005\000\
-\\000\000\000\000\000\000\000\000\000\000\000\004\000\000\000\000\
-\\000\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\
-\\003\003\003\003\003\003\003\003\003\003\003\000\000\000\000\000\
-\\000\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\
-\\003\003\003\003\003\003\003\003\003\003\003\000\000\000\000\000\
-\\000"
+"\003\003\003\003\003\003\003\003\003\009\011\003\003\003\003\003\
+\\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\
+\\009\003\003\003\003\003\003\003\008\007\003\003\003\003\003\003\
+\\003\003\003\003\003\003\003\003\003\003\003\006\003\003\003\003\
+\\003\004\004\004\004\004\004\004\004\004\004\004\004\004\004\004\
+\\004\004\004\004\004\004\004\004\004\004\004\003\003\003\003\003\
+\\003\004\004\004\004\004\004\004\004\004\004\004\004\004\004\004\
+\\004\004\004\004\004\004\004\004\004\004\004\003\003\003\003\003\
+\\003"
 ),
- (3, 
+ (4, 
 "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\000\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\
-\\003\003\003\003\003\003\003\003\003\003\003\000\000\000\000\000\
-\\000\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\
-\\003\003\003\003\003\003\003\003\003\003\003\000\000\000\000\000\
+\\000\005\005\005\005\005\005\005\005\005\005\005\005\005\005\005\
+\\005\005\005\005\005\005\005\005\005\005\005\000\000\000\000\000\
+\\000\005\005\005\005\005\005\005\005\005\005\005\005\005\005\005\
+\\005\005\005\005\005\005\005\005\005\005\005\000\000\000\000\000\
 \\000"
 ),
- (8, 
-"\000\000\000\000\000\000\000\000\000\008\000\000\000\000\000\000\
+ (9, 
+"\000\000\000\000\000\000\000\000\000\010\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\008\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\010\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -84,12 +86,14 @@ in Vector.fromList(List.map g
 [{fin = [], trans = 0},
 {fin = [], trans = 1},
 {fin = [], trans = 1},
-{fin = [(N 13)], trans = 3},
-{fin = [(N 6)], trans = 0},
 {fin = [(N 15)], trans = 0},
-{fin = [(N 10)], trans = 0},
-{fin = [(N 8)], trans = 0},
-{fin = [(N 4)], trans = 8},
+{fin = [(N 13),(N 15)], trans = 4},
+{fin = [(N 13)], trans = 4},
+{fin = [(N 6),(N 15)], trans = 0},
+{fin = [(N 10),(N 15)], trans = 0},
+{fin = [(N 8),(N 15)], trans = 0},
+{fin = [(N 4),(N 15)], trans = 9},
+{fin = [(N 4)], trans = 9},
 {fin = [(N 1)], trans = 0}])
 end
 structure StartStates =
@@ -132,25 +136,24 @@ let fun continue() = lex() in
 
 			(* Application actions *)
 
-  1 => (pos := (!pos) + 1; lex())
-| 10 => (Tokens.RPAREN(!pos,!pos))
-| 13 => let val yytext=yymktext() in if yytext = "AND" then (Tokens.AND(!pos, !pos))
-            else if yytext = "OR" then Tokens.OR(!pos,!pos)
-            else if yytext = "XOR" then Tokens.XOR(!pos,!pos)
-            else if yytext = "EQUALS" then Tokens.EQUALS(!pos,!pos)
-            else if yytext = "IF" then Tokens.IF(!pos,!pos)
-            else if yytext = "THEN" then Tokens.THEN(!pos,!pos)
-            else if yytext = "ELSE" then Tokens.ELSE(!pos,!pos)
-            else if yytext = "IMPLIES" then Tokens.IMPLIES(!pos,!pos)
-            else if yytext = "NOT" then Tokens.NOT(!pos,!pos)
-            else if yytext = "TRUE" then Tokens.CONST(yytext,!pos,!pos)
-            else if yytext = "FALSE" then Tokens.CONST(yytext,!pos,!pos)
-            else Tokens.ID(yytext,!pos,!pos) end
-| 15 => let val yytext=yymktext() in error ("Unknown token:"^yytext,!pos,!pos);
-             lex() end
-| 4 => (lex())
-| 6 => (Tokens.EOF(!pos,!pos))
-| 8 => (Tokens.LPAREN(!pos,!pos))
+  1 => (inc(line,1); lex())
+| 10 => (inc(pos,1); update("RPAREN","("); Tokens.RPAREN(!pos,!line))
+| 13 => let val yytext=yymktext() in if yytext = "AND" then (inc(pos,3); update("AND","AND"); Tokens.AND(!pos, !line))
+            else if yytext = "OR" then (inc(pos,2); update("OR","OR"); Tokens.OR(!pos,!line))
+            else if yytext = "XOR" then (inc(pos,3); update("XOR","XOR"); Tokens.XOR(!pos,!line))
+            else if yytext = "EQUALS" then (inc(pos,6); update("EQUALS","EQUALS"); Tokens.EQUALS(!pos,!line))
+            else if yytext = "IF" then (inc(pos,2); update("IF","IF"); Tokens.IF(!pos,!line))
+            else if yytext = "THEN" then (inc(pos,4);  update("THEN","THEN");Tokens.THEN(!pos,!line))
+            else if yytext = "ELSE" then (inc(pos,5); update("ELSE","ELSE"); Tokens.ELSE(!pos,!line))
+            else if yytext = "IMPLIES" then (inc(pos,7); update("IMPLIES","IMPLIES"); Tokens.IMPLIES(!pos,!line))
+            else if yytext = "NOT" then (inc(pos,3); update("NOT","NOT"); Tokens.NOT(!pos,!line))
+            else if yytext = "TRUE" then (inc(pos,4);  update("CONST","TRUE");Tokens.CONST(yytext,!pos,!line))
+            else if yytext = "FALSE" then (inc(pos,5); update("CONST","FALSE"); Tokens.CONST(yytext,!pos,!line))
+            else (inc(pos,String.size(yytext)); update("ID",yytext); Tokens.ID(yytext,!pos,!line)) end
+| 15 => let val yytext=yymktext() in error(yytext,!pos,!line); lex() end
+| 4 => (inc(pos,1); lex())
+| 6 => (inc(pos,1); update("EOS",";"); Tokens.EOF(!pos,!line))
+| 8 => (inc(pos,1); update("LPAREN",")"); Tokens.LPAREN(!pos,!line))
 | _ => raise Internal.LexerError
 
 		) end )

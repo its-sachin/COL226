@@ -9,9 +9,6 @@ struct
 structure Header = 
 struct
 (* user declarations*)
-fun constVal "True" = 1
-    | constVal s = 0
-
 
 
 end
@@ -152,14 +149,12 @@ structure MlyValue =
 struct
 datatype svalue = VOID | ntVOID of unit ->  unit
  | CONST of unit ->  (string) | ID of unit ->  (string)
- | START of unit ->  ( ( string * string )  list)
- | F4 of unit ->  ( ( string * string )  list)
- | F3 of unit ->  ( ( string * string )  list)
- | F2 of unit ->  ( ( string * string )  list)
- | F1 of unit ->  ( ( string * string )  list)
+ | START of unit ->  (string list) | F4 of unit ->  (string list)
+ | F3 of unit ->  (string list) | F2 of unit ->  (string list)
+ | F1 of unit ->  (string list)
 end
 type svalue = MlyValue.svalue
-type result =  ( string * string )  list
+type result = string list
 end
 structure EC=
 struct
@@ -216,96 +211,97 @@ end
 |  ( 2, ( ( _, ( MlyValue.F1 F12, _, F12right)) :: _ :: ( _, ( 
 MlyValue.F1 F11, _, _)) :: _ :: ( _, ( MlyValue.F2 F21, _, _)) :: ( _,
  ( _, IF1left, _)) :: rest671)) => let val  result = MlyValue.F1 (fn _
- => let val  F21 = F21 ()
- val  F11 = F11 ()
+ => let val  (F2 as F21) = F21 ()
+ val  (F1 as F11) = F11 ()
  val  F12 = F12 ()
- in ( [("IF","IF")]@F21@[("THEN","THEN")]@F11@[("ELSE","ELSE")]@F12 )
-
+ in (
+ ["IF IF"]@F21@["THEN THEN"]@F11@["ELSE ELSE"]@F12@["F1 -> IF F2 THEN F1 ELSE F1"] 
+)
 end)
  in ( LrTable.NT 0, ( result, IF1left, F12right), rest671)
 end
 |  ( 3, ( ( _, ( MlyValue.F2 F21, F21left, F21right)) :: rest671)) =>
  let val  result = MlyValue.F1 (fn _ => let val  (F2 as F21) = F21 ()
- in (F2)
+ in (F2@["F1 -> F2"])
 end)
  in ( LrTable.NT 0, ( result, F21left, F21right), rest671)
 end
 |  ( 4, ( ( _, ( MlyValue.F2 F21, _, F21right)) :: _ :: ( _, ( 
 MlyValue.F3 F31, F31left, _)) :: rest671)) => let val  result = 
-MlyValue.F2 (fn _ => let val  F31 = F31 ()
- val  F21 = F21 ()
- in ( F31@[("IMPLIES","IMPLIES")]@F21 )
+MlyValue.F2 (fn _ => let val  (F3 as F31) = F31 ()
+ val  (F2 as F21) = F21 ()
+ in ( F31@["IMPLIES IMPLIES"]@F21@["F2 -> F3 IMPLIES F2"] )
 end)
  in ( LrTable.NT 1, ( result, F31left, F21right), rest671)
 end
 |  ( 5, ( ( _, ( MlyValue.F3 F31, F31left, F31right)) :: rest671)) =>
  let val  result = MlyValue.F2 (fn _ => let val  (F3 as F31) = F31 ()
- in (F3)
+ in (F3@["F2 -> F3"])
 end)
  in ( LrTable.NT 1, ( result, F31left, F31right), rest671)
 end
 |  ( 6, ( ( _, ( MlyValue.F4 F41, _, F41right)) :: _ :: ( _, ( 
 MlyValue.F3 F31, F31left, _)) :: rest671)) => let val  result = 
-MlyValue.F3 (fn _ => let val  F31 = F31 ()
- val  F41 = F41 ()
- in ( F31@[("AND","AND")]@F41 )
+MlyValue.F3 (fn _ => let val  (F3 as F31) = F31 ()
+ val  (F4 as F41) = F41 ()
+ in ( F31@["AND AND"]@F41@["F3 -> F3 AND F4"] )
 end)
  in ( LrTable.NT 2, ( result, F31left, F41right), rest671)
 end
 |  ( 7, ( ( _, ( MlyValue.F4 F41, _, F41right)) :: _ :: ( _, ( 
 MlyValue.F3 F31, F31left, _)) :: rest671)) => let val  result = 
-MlyValue.F3 (fn _ => let val  F31 = F31 ()
- val  F41 = F41 ()
- in ( F31@[("OR","OR")]@F41 )
+MlyValue.F3 (fn _ => let val  (F3 as F31) = F31 ()
+ val  (F4 as F41) = F41 ()
+ in (F31@["OR OR"]@F41@["F3 -> F3 XOR F4"] )
 end)
  in ( LrTable.NT 2, ( result, F31left, F41right), rest671)
 end
 |  ( 8, ( ( _, ( MlyValue.F4 F41, _, F41right)) :: _ :: ( _, ( 
 MlyValue.F3 F31, F31left, _)) :: rest671)) => let val  result = 
-MlyValue.F3 (fn _ => let val  F31 = F31 ()
- val  F41 = F41 ()
- in ( F31@[("XOR","XOR")]@F41 )
+MlyValue.F3 (fn _ => let val  (F3 as F31) = F31 ()
+ val  (F4 as F41) = F41 ()
+ in ( F31@["XOR XOR"]@F41@["F3 -> F3 EQUALS F4"])
 end)
  in ( LrTable.NT 2, ( result, F31left, F41right), rest671)
 end
 |  ( 9, ( ( _, ( MlyValue.F4 F41, _, F41right)) :: _ :: ( _, ( 
 MlyValue.F3 F31, F31left, _)) :: rest671)) => let val  result = 
-MlyValue.F3 (fn _ => let val  F31 = F31 ()
- val  F41 = F41 ()
- in ( F31@[("EQUALS","EQUALS")]@F41 )
+MlyValue.F3 (fn _ => let val  (F3 as F31) = F31 ()
+ val  (F4 as F41) = F41 ()
+ in ( F31@["EQUALS EQUALS"]@F41@["F3 -> F3 EQUALS F4"] )
 end)
  in ( LrTable.NT 2, ( result, F31left, F41right), rest671)
 end
 |  ( 10, ( ( _, ( MlyValue.F4 F41, F41left, F41right)) :: rest671)) =>
  let val  result = MlyValue.F3 (fn _ => let val  (F4 as F41) = F41 ()
- in (F4)
+ in (F4@["F3 -> F4"])
 end)
  in ( LrTable.NT 2, ( result, F41left, F41right), rest671)
 end
 |  ( 11, ( ( _, ( MlyValue.ID ID1, ID1left, ID1right)) :: rest671)) =>
  let val  result = MlyValue.F4 (fn _ => let val  (ID as ID1) = ID1 ()
- in ([("ID",ID1)])
+ in (["ID "^ ID1, "F4 -> ID"])
 end)
  in ( LrTable.NT 3, ( result, ID1left, ID1right), rest671)
 end
 |  ( 12, ( ( _, ( MlyValue.CONST CONST1, CONST1left, CONST1right)) :: 
 rest671)) => let val  result = MlyValue.F4 (fn _ => let val  (CONST
  as CONST1) = CONST1 ()
- in ([("CONST",CONST1)])
+ in (["CONST "^CONST1, "F4 -> CONST"])
 end)
  in ( LrTable.NT 3, ( result, CONST1left, CONST1right), rest671)
 end
 |  ( 13, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.F1 F11, _, _
 )) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let val  result = 
-MlyValue.F4 (fn _ => let val  F11 = F11 ()
- in ( [("LPAREN","(")]@F11@[("RPAREN",")")] )
+MlyValue.F4 (fn _ => let val  (F1 as F11) = F11 ()
+ in ( ["LPAREN ("]@F11@["RPAREN )"]@["F4 -> (F1)"] )
 end)
  in ( LrTable.NT 3, ( result, LPAREN1left, RPAREN1right), rest671)
 end
 |  ( 14, ( ( _, ( MlyValue.F4 F41, _, F41right)) :: ( _, ( _, NOT1left
-, _)) :: rest671)) => let val  result = MlyValue.F4 (fn _ => let val  
-F41 = F41 ()
- in ( [("NOT","NOT")]@F41 )
+, _)) :: rest671)) => let val  result = MlyValue.F4 (fn _ => let val 
+ (F4 as F41) = F41 ()
+ in (["NOT NOT"]@F41@["F4 -> NOT F4"] )
 end)
  in ( LrTable.NT 3, ( result, NOT1left, F41right), rest671)
 end

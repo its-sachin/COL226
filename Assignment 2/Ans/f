@@ -1,3 +1,2 @@
-IF C AND FALSE 
-| THEN D ELSE G;
+A AND B
 
