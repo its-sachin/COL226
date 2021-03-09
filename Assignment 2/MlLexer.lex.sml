@@ -1,34 +1,16 @@
-functor BoolLexFun(structure Tokens:Bool_TOKENS)=
+structure SimpLex=
    struct
     structure UserDeclarations =
       struct
-structure Tokens= Tokens
-  
-  type pos = int
-  type line = int
-  type svalue = Tokens.svalue
-  type ('a,'b) token = ('a,'b) Tokens.token  
-  type lexresult = (svalue, pos) token
-
-
-  val pos = ref 0
-  val line = ref 0;
-  val eof = fn () => Tokens.EOF(!pos, !pos)
-  val error = fn (s,a:int, _) => TextIO.output(TextIO.stdOut,"Unknown token:"^(Int.toString(a))^":"^(Int.toString(!line))^":"^s^ "\n")
-
-  fun inc(pos,num) = pos := (!pos) + num;
-  fun setzero(pos) = pos := (!pos) - (!pos);
-
-  val a=  Array.array(0,Term.IF("a"))
-  val array = ref a;
-  (* fun update(s,a) = list := !list^s^" \""^a^"\""^","; *)
-  fun aTol arr = Array.foldr (op ::) [] arr;
-  fun update(s) = 
-    let 
-      val list = (aTol (!array))@[s]
-    in
-      array := Array.fromList(list)
-    end
+datatype lexresult= DIV | EOF | EOS | ID of string | LPAREN |
+                    NUM of int | PLUS | PRINT | RPAREN | SUB | TIMES | EQ
+                    
+datatype lexresult2= DIV2 | EOF2 | EOS2 | ID2 of string | LPAREN2 |
+                    NUM2 of int | PLUS2 | PRINT2 | RPAREN2 | SUB2 | TIMES2 | EQ2
+val linenum = ref 1
+val error = fn x => TextIO.output(TextIO.stdOut,x ^ "\n")
+val eof = fn () => EOF
+fun refinc x =  (x := !x + 1; !x)
 
   
 end (* end of user routines *)
@@ -53,14 +35,14 @@ val s = [
 \\000"
 ),
  (1, 
-"\003\003\003\003\003\003\003\003\003\009\011\003\003\003\003\003\
+"\003\003\003\003\003\003\003\003\003\018\000\003\003\003\003\003\
 \\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\003\
-\\009\003\003\003\003\003\003\003\008\007\003\003\003\003\003\003\
-\\003\003\003\003\003\003\003\003\003\003\003\006\003\003\003\003\
+\\018\003\003\003\003\003\003\003\017\016\015\014\003\013\003\012\
+\\010\010\010\010\010\010\010\010\010\010\003\009\003\008\003\003\
 \\003\004\004\004\004\004\004\004\004\004\004\004\004\004\004\004\
 \\004\004\004\004\004\004\004\004\004\004\004\003\003\003\003\003\
 \\003\004\004\004\004\004\004\004\004\004\004\004\004\004\004\004\
-\\004\004\004\004\004\004\004\004\004\004\004\003\003\003\003\003\
+\\004\004\004\004\004\004\004\004\006\004\004\003\003\003\003\003\
 \\003"
 ),
  (4, 
@@ -74,10 +56,32 @@ val s = [
 \\005\005\005\005\005\005\005\005\005\005\005\000\000\000\000\000\
 \\000"
 ),
- (9, 
-"\000\000\000\000\000\000\000\000\000\010\000\000\000\000\000\000\
+ (6, 
+"\000\000\000\000\000\000\000\000\000\000\007\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\\010\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\005\005\005\005\005\005\005\005\005\005\005\005\005\005\005\
+\\005\005\005\005\005\005\005\005\005\005\005\000\000\000\000\000\
+\\000\005\005\005\005\005\005\005\005\005\005\005\005\005\005\005\
+\\005\005\005\005\005\005\005\005\005\005\005\000\000\000\000\000\
+\\000"
+),
+ (10, 
+"\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\011\011\011\011\011\011\011\011\011\011\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\000"
+),
+ (18, 
+"\000\000\000\000\000\000\000\000\000\019\000\000\000\000\000\000\
+\\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\\019\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -96,15 +100,23 @@ in Vector.fromList(List.map g
 [{fin = [], trans = 0},
 {fin = [], trans = 1},
 {fin = [], trans = 1},
-{fin = [(N 15)], trans = 0},
-{fin = [(N 13),(N 15)], trans = 4},
-{fin = [(N 13)], trans = 4},
-{fin = [(N 6),(N 15)], trans = 0},
-{fin = [(N 10),(N 15)], trans = 0},
-{fin = [(N 8),(N 15)], trans = 0},
-{fin = [(N 4),(N 15)], trans = 9},
-{fin = [(N 4)], trans = 9},
-{fin = [(N 1)], trans = 0}])
+{fin = [(N 29)], trans = 0},
+{fin = [(N 23),(N 29)], trans = 4},
+{fin = [(N 23)], trans = 4},
+{fin = [(N 23),(N 29)], trans = 6},
+{fin = [(N 2)], trans = 0},
+{fin = [(N 13),(N 29)], trans = 0},
+{fin = [(N 9),(N 29)], trans = 0},
+{fin = [(N 16),(N 29)], trans = 10},
+{fin = [(N 16)], trans = 10},
+{fin = [(N 7),(N 29)], trans = 0},
+{fin = [(N 25),(N 29)], trans = 0},
+{fin = [(N 20),(N 29)], trans = 0},
+{fin = [(N 27),(N 29)], trans = 0},
+{fin = [(N 18),(N 29)], trans = 0},
+{fin = [(N 11),(N 29)], trans = 0},
+{fin = [(N 5),(N 29)], trans = 18},
+{fin = [(N 5)], trans = 18}])
 end
 structure StartStates =
 	struct
@@ -146,24 +158,19 @@ let fun continue() = lex() in
 
 			(* Application actions *)
 
-  1 => (inc(line,1); setzero(pos); lex())
-| 10 => (inc(pos,1); update(Term.RPAREN(")")); Tokens.RPAREN(!pos,!line))
-| 13 => let val yytext=yymktext() in if yytext = "AND" then (inc(pos,3); update(Term.AND("AND")); Tokens.AND(!pos, !line))
-            else if yytext = "OR" then (inc(pos,2); update(Term.OR("OR")); Tokens.OR(!pos,!line))
-            else if yytext = "XOR" then (inc(pos,3); update(Term.XOR("XOR")); Tokens.XOR(!pos,!line))
-            else if yytext = "EQUALS" then (inc(pos,6); update(Term.EQUALS("EQUALS")); Tokens.EQUALS(!pos,!line))
-            else if yytext = "IF" then (inc(pos,2); update(Term.IF("IF")); Tokens.IF(!pos,!line))
-            else if yytext = "THEN" then (inc(pos,4);  update(Term.THEN("THEN"));Tokens.THEN(!pos,!line))
-            else if yytext = "ELSE" then (inc(pos,5); update(Term.ELSE("ELSE")); Tokens.ELSE(!pos,!line))
-            else if yytext = "IMPLIES" then (inc(pos,7); update(Term.IMPLIES("IMPLIES")); Tokens.IMPLIES(!pos,!line))
-            else if yytext = "NOT" then (inc(pos,3); update(Term.IMPLIES("IMPLIES")); Tokens.NOT(!pos,!line))
-            else if yytext = "TRUE" then (inc(pos,4);  update(Term.CONST("TRUE")); Tokens.CONST(yytext,!pos,!line))
-            else if yytext = "FALSE" then (inc(pos,5); update(Term.CONST("FALSE")); Tokens.CONST(yytext,!pos,!line))
-            else (inc(pos,String.size(yytext)); update(Term.ID(yytext)); Tokens.ID(yytext,!pos,!line)) end
-| 15 => let val yytext=yymktext() in error(yytext,!pos,!line); lex() end
-| 4 => (inc(pos,1); lex())
-| 6 => (inc(pos,1); update(Term.EOF("EOS")); Tokens.EOF(!pos,!line))
-| 8 => (inc(pos,1); update(Term.LPAREN("(")); Tokens.LPAREN(!pos,!line))
+  11 => (LPAREN)
+| 13 => (EQ)
+| 16 => let val yytext=yymktext() in NUM  (List.foldr (fn(a,r)=>ord(a)-ord(#"0")+10*r) 0 (explode yytext)) end
+| 18 => (RPAREN)
+| 2 => (refinc linenum; lex())
+| 20 => (PLUS)
+| 23 => let val yytext=yymktext() in ID yytext end
+| 25 => (SUB)
+| 27 => (TIMES)
+| 29 => let val yytext=yymktext() in error ("calc: ignoring bad character "^yytext); lex() end
+| 5 => (lex())
+| 7 => (DIV)
+| 9 => (EOS)
 | _ => raise Internal.LexerError
 
 		) end )

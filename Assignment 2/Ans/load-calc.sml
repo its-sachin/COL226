@@ -7,20 +7,20 @@ structure BoolParser = 	Join(structure LrParser = LrParser
 fun readFile infile =
     let val done = ref false
 		val instream = TextIO.openIn infile
-    	val lexer =  BoolParser.makeLexer (fn _ => if (!done) then "" else (done:=true; printLexer(); TextIO.input instream))
+    	val lexer =  BoolParser.makeLexer (fn _ => if (!done) then "" else (done:=true; TextIO.input instream))
     in
 	BoolLex.UserDeclarations.pos := 0;
 	BoolLex.UserDeclarations.line := 0;
-	BoolLex.UserDeclarations.list := "[";
+	BoolLex.UserDeclarations.array := Array.array(0,Term.IF("a"));
 	lexer
     end
 
 fun printLexer() = 
 	let 
-		val listUnref = !BoolLex.UserDeclarations.list
-		val len = String.size(listUnref)
+		fun aTol arr = Array.foldr (op ::) [] arr;
+		val list = aTol (!BoolLex.UserDeclarations.array)
 	in
-		TextIO.output(TextIO.stdOut, String.substring(listUnref,0,len-1)^"]\n")
+		list
 	end
 
 fun invoke lexstream =

@@ -1,6 +1,6 @@
 CM.make("$/basis.cm");
 CM.make("$/ml-yacc-lib.cm");
-(* use "ast.sml"; *)
+use "Term.sml";
 use "bool.yacc.sig";
 use "bool.yacc.sml";
 use "bool.lex.sml";
