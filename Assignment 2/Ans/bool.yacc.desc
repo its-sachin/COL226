@@ -1,7 +1,7 @@
 
 state 0:
 
-	START : . F1 
+	START : . statement TERM 
 	START : .  (reduce by rule 1)
 
 	ID	shift 9
@@ -10,18 +10,18 @@ state 0:
 	IF	shift 6
 	LPAREN	shift 5
 
-	F1	goto 4
-	F2	goto 3
-	F3	goto 2
-	F4	goto 1
-	START	goto 28
+	statement	goto 4
+	IMPLICATION	goto 3
+	OPERATION	goto 2
+	VARIABLE	goto 1
+	START	goto 29
 
 	.	reduce by rule 1
 
 
 state 1:
 
-	F3 : F4 .  (reduce by rule 10)
+	OPERATION : VARIABLE .  (reduce by rule 10)
 
 
 
@@ -30,12 +30,12 @@ state 1:
 
 state 2:
 
-	F2 : F3 . IMPLIES F2 
-	F2 : F3 .  (reduce by rule 5)
-	F3 : F3 . AND F4 
-	F3 : F3 . OR F4 
-	F3 : F3 . XOR F4 
-	F3 : F3 . EQUALS F4 
+	IMPLICATION : OPERATION . IMPLIES IMPLICATION 
+	IMPLICATION : OPERATION .  (reduce by rule 5)
+	OPERATION : OPERATION . AND VARIABLE 
+	OPERATION : OPERATION . OR VARIABLE 
+	OPERATION : OPERATION . XOR VARIABLE 
+	OPERATION : OPERATION . EQUALS VARIABLE 
 
 	IMPLIES	shift 14
 	AND	shift 13
@@ -49,7 +49,7 @@ state 2:
 
 state 3:
 
-	F1 : F2 .  (reduce by rule 3)
+	statement : IMPLICATION .  (reduce by rule 3)
 
 
 
@@ -58,16 +58,17 @@ state 3:
 
 state 4:
 
-	START : F1 .  (reduce by rule 0)
+	START : statement . TERM 
+
+	TERM	shift 15
 
 
-
-	.	reduce by rule 0
+	.	error
 
 
 state 5:
 
-	F4 : LPAREN . F1 RPAREN 
+	VARIABLE : LPAREN . statement RPAREN 
 
 	ID	shift 9
 	CONST	shift 8
@@ -75,47 +76,47 @@ state 5:
 	IF	shift 6
 	LPAREN	shift 5
 
-	F1	goto 15
-	F2	goto 3
-	F3	goto 2
-	F4	goto 1
+	statement	goto 16
+	IMPLICATION	goto 3
+	OPERATION	goto 2
+	VARIABLE	goto 1
 
 	.	error
 
 
 state 6:
 
-	F1 : IF . F2 THEN F1 ELSE F1 
+	statement : IF . IMPLICATION THEN statement ELSE statement 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F2	goto 16
-	F3	goto 2
-	F4	goto 1
+	IMPLICATION	goto 17
+	OPERATION	goto 2
+	VARIABLE	goto 1
 
 	.	error
 
 
 state 7:
 
-	F4 : NOT . F4 
+	VARIABLE : NOT . VARIABLE 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F4	goto 17
+	VARIABLE	goto 18
 
 	.	error
 
 
 state 8:
 
-	F4 : CONST .  (reduce by rule 12)
+	VARIABLE : CONST .  (reduce by rule 12)
 
 
 
@@ -124,7 +125,7 @@ state 8:
 
 state 9:
 
-	F4 : ID .  (reduce by rule 11)
+	VARIABLE : ID .  (reduce by rule 11)
 
 
 
@@ -133,91 +134,90 @@ state 9:
 
 state 10:
 
-	F3 : F3 EQUALS . F4 
+	OPERATION : OPERATION EQUALS . VARIABLE 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F4	goto 18
+	VARIABLE	goto 19
 
 	.	error
 
 
 state 11:
 
-	F3 : F3 XOR . F4 
+	OPERATION : OPERATION XOR . VARIABLE 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F4	goto 19
+	VARIABLE	goto 20
 
 	.	error
 
 
 state 12:
 
-	F3 : F3 OR . F4 
+	OPERATION : OPERATION OR . VARIABLE 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F4	goto 20
+	VARIABLE	goto 21
 
 	.	error
 
 
 state 13:
 
-	F3 : F3 AND . F4 
+	OPERATION : OPERATION AND . VARIABLE 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F4	goto 21
+	VARIABLE	goto 22
 
 	.	error
 
 
 state 14:
 
-	F2 : F3 IMPLIES . F2 
+	IMPLICATION : OPERATION IMPLIES . IMPLICATION 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	F2	goto 22
-	F3	goto 2
-	F4	goto 1
+	IMPLICATION	goto 23
+	OPERATION	goto 2
+	VARIABLE	goto 1
 
 	.	error
 
 
 state 15:
 
-	F4 : LPAREN F1 . RPAREN 
-
-	RPAREN	shift 23
+	START : statement TERM .  (reduce by rule 0)
 
 
-	.	error
+
+	.	reduce by rule 0
 
 
 state 16:
 
-	F1 : IF F2 . THEN F1 ELSE F1 
+	VARIABLE : LPAREN statement . RPAREN 
 
-	THEN	shift 24
+	RPAREN	shift 24
 
 
 	.	error
@@ -225,70 +225,80 @@ state 16:
 
 state 17:
 
-	F4 : NOT F4 .  (reduce by rule 14)
+	statement : IF IMPLICATION . THEN statement ELSE statement 
+
+	THEN	shift 25
+
+
+	.	error
+
+
+state 18:
+
+	VARIABLE : NOT VARIABLE .  (reduce by rule 14)
 
 
 
 	.	reduce by rule 14
 
 
-state 18:
+state 19:
 
-	F3 : F3 EQUALS F4 .  (reduce by rule 9)
+	OPERATION : OPERATION EQUALS VARIABLE .  (reduce by rule 9)
 
 
 
 	.	reduce by rule 9
 
 
-state 19:
+state 20:
 
-	F3 : F3 XOR F4 .  (reduce by rule 8)
+	OPERATION : OPERATION XOR VARIABLE .  (reduce by rule 8)
 
 
 
 	.	reduce by rule 8
 
 
-state 20:
+state 21:
 
-	F3 : F3 OR F4 .  (reduce by rule 7)
+	OPERATION : OPERATION OR VARIABLE .  (reduce by rule 7)
 
 
 
 	.	reduce by rule 7
 
 
-state 21:
+state 22:
 
-	F3 : F3 AND F4 .  (reduce by rule 6)
+	OPERATION : OPERATION AND VARIABLE .  (reduce by rule 6)
 
 
 
 	.	reduce by rule 6
 
 
-state 22:
+state 23:
 
-	F2 : F3 IMPLIES F2 .  (reduce by rule 4)
+	IMPLICATION : OPERATION IMPLIES IMPLICATION .  (reduce by rule 4)
 
 
 
 	.	reduce by rule 4
 
 
-state 23:
+state 24:
 
-	F4 : LPAREN F1 RPAREN .  (reduce by rule 13)
+	VARIABLE : LPAREN statement RPAREN .  (reduce by rule 13)
 
 
 
 	.	reduce by rule 13
 
 
-state 24:
+state 25:
 
-	F1 : IF F2 THEN . F1 ELSE F1 
+	statement : IF IMPLICATION THEN . statement ELSE statement 
 
 	ID	shift 9
 	CONST	shift 8
@@ -296,27 +306,27 @@ state 24:
 	IF	shift 6
 	LPAREN	shift 5
 
-	F1	goto 25
-	F2	goto 3
-	F3	goto 2
-	F4	goto 1
-
-	.	error
-
-
-state 25:
-
-	F1 : IF F2 THEN F1 . ELSE F1 
-
-	ELSE	shift 26
-
+	statement	goto 26
+	IMPLICATION	goto 3
+	OPERATION	goto 2
+	VARIABLE	goto 1
 
 	.	error
 
 
 state 26:
 
-	F1 : IF F2 THEN F1 ELSE . F1 
+	statement : IF IMPLICATION THEN statement . ELSE statement 
+
+	ELSE	shift 27
+
+
+	.	error
+
+
+state 27:
+
+	statement : IF IMPLICATION THEN statement ELSE . statement 
 
 	ID	shift 9
 	CONST	shift 8
@@ -324,24 +334,24 @@ state 26:
 	IF	shift 6
 	LPAREN	shift 5
 
-	F1	goto 27
-	F2	goto 3
-	F3	goto 2
-	F4	goto 1
+	statement	goto 28
+	IMPLICATION	goto 3
+	OPERATION	goto 2
+	VARIABLE	goto 1
 
 	.	error
 
 
-state 27:
+state 28:
 
-	F1 : IF F2 THEN F1 ELSE F1 .  (reduce by rule 2)
+	statement : IF IMPLICATION THEN statement ELSE statement .  (reduce by rule 2)
 
 
 
 	.	reduce by rule 2
 
 
-state 28:
+state 29:
 
 
 	EOF	accept
@@ -349,5 +359,5 @@ state 28:
 
 	.	error
 
-23 of 86 action table entries left after compaction
+24 of 88 action table entries left after compaction
 28 goto table entries

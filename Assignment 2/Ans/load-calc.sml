@@ -1,21 +1,27 @@
+exception LexerError
+
 structure BoolLrVals = 	BoolLrValsFun(structure Token = LrParser.Token)
 structure BoolLex 	 = 	BoolLexFun(structure Tokens = BoolLrVals.Tokens);
 structure BoolParser = 	Join(structure LrParser = LrParser
      	       				structure ParserData = BoolLrVals.ParserData
      	       				structure Lex = BoolLex)
 
+fun initLex() = 
+	BoolLex.UserDeclarations.pos := 0;
+	BoolLex.UserDeclarations.line := 1;
+	BoolLex.UserDeclarations.isError := false;
+	BoolLex.UserDeclarations.array := Array.array(0,Term.IF("a"));
+
 fun readFile infile =
     let val done = ref false
 		val instream = TextIO.openIn infile
     	val lexer =  BoolParser.makeLexer (fn _ => if (!done) then "" else (done:=true; TextIO.input instream))
     in
-	BoolLex.UserDeclarations.pos := 0;
-	BoolLex.UserDeclarations.line := 0;
-	BoolLex.UserDeclarations.array := Array.array(0,Term.IF("a"));
-	lexer
+	(initLex();
+	lexer)
     end
 
-fun printLexer() = 
+fun lexerRes() = 
 	let 
 		fun aTol arr = Array.foldr (op ::) [] arr;
 		val list = aTol (!BoolLex.UserDeclarations.array)
@@ -38,8 +44,8 @@ fun parse (lexer) =
     	val (result, lexer) = invoke lexer
 	val (nextToken, lexer) = BoolParser.Stream.get lexer
     in
-        if BoolParser.sameToken(nextToken, dummyEOF) then(result)
- 	else (TextIO.output(TextIO.stdOut, "Warning: Unconsumed input \n"); result)
+		if (!BoolLex.UserDeclarations.isError = true) then raise LexerError
+        else (result)
     end
 
 
