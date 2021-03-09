@@ -9,10 +9,9 @@
     ID of string| CONST of string | NOT | IMPLIES | AND | OR | XOR 
     | EQUALS | IF | THEN | ELSE | RPAREN | LPAREN | TERM | EOF
 
-%nonterm  statement of string list | IMPLICATION of string  list 
-    | OPERATION of string list | VARIABLE of string list 
-    | START of string list
-(* why options?? and "of sring" when to apply*)
+%nonterm  statement of string list | implication of string  list 
+    | operation of string list | variable of string list 
+    | formula of string list
 
 %pos int
 
@@ -28,29 +27,29 @@
 %right IMPLIES NOT
 %right IF THEN ELSE
 
-%start START
+%start formula
 %verbose
 
 
 %%
 
-START: statement TERM (statement@["TERM ;"])
+formula: statement TERM (statement@["TERM ;","formula -> statement;"])
     | ([])
 
-statement: IF IMPLICATION THEN statement ELSE statement ( ["IF IF"]@IMPLICATION1@["THEN THEN"]@statement1@["ELSE ELSE"]@statement2@["statement -> IF IMPLICATION THEN statement ELSE statement"] )
-    | IMPLICATION (IMPLICATION@["statement -> IMPLICATION"])
+statement: IF implication THEN statement ELSE statement ( ["IF IF"]@implication1@["THEN THEN"]@statement1@["ELSE ELSE"]@statement2@["statement -> IF implication THEN statement ELSE statement"] )
+    | implication (implication@["statement -> implication"])
 
-IMPLICATION: OPERATION IMPLIES IMPLICATION ( OPERATION1@["IMPLIES IMPLIES"]@IMPLICATION1@["IMPLICATION -> OPERATION IMPLIES IMPLICATION"] ) 
-    | OPERATION (OPERATION@["IMPLICATION -> OPERATION"])
+implication: operation IMPLIES implication ( operation1@["IMPLIES IMPLIES"]@implication1@["implication -> operation IMPLIES implication"] ) 
+    | operation (operation@["implication -> operation"])
 
-OPERATION: OPERATION AND VARIABLE ( OPERATION1@["AND AND"]@VARIABLE1@["OPERATION -> OPERATION AND VARIABLE"] )
-    | OPERATION OR VARIABLE (OPERATION1@["OR OR"]@VARIABLE1@["OPERATION -> OPERATION XOR VARIABLE"] )
-    | OPERATION XOR VARIABLE ( OPERATION1@["XOR XOR"]@VARIABLE1@["OPERATION -> OPERATION EQUALS VARIABLE"])
-    | OPERATION EQUALS VARIABLE ( OPERATION1@["EQUALS EQUALS"]@VARIABLE1@["OPERATION -> OPERATION EQUALS VARIABLE"] )
-    | VARIABLE (VARIABLE@["OPERATION -> VARIABLE"])
+operation: operation AND variable ( operation1@["AND AND"]@variable1@["operation -> operation AND variable"] )
+    | operation OR variable (operation1@["OR OR"]@variable1@["operation -> operation XOR variable"] )
+    | operation XOR variable ( operation1@["XOR XOR"]@variable1@["operation -> operation EQUALS variable"])
+    | operation EQUALS variable ( operation1@["EQUALS EQUALS"]@variable1@["operation -> operation EQUALS variable"] )
+    | variable (variable@["operation -> variable"])
 
-VARIABLE: ID (["ID "^ ID1, "VARIABLE -> ID"])
-    | CONST (["CONST "^CONST1, "VARIABLE -> CONST"])
-    | LPAREN statement RPAREN ( ["LPAREN ("]@statement1@["RPAREN )"]@["VARIABLE -> (statement)"] )
-    | NOT VARIABLE (["NOT NOT"]@VARIABLE1@["VARIABLE -> NOT VARIABLE"] )
+variable: ID (["ID "^ ID1])
+    | CONST (["CONST "^CONST1])
+    | LPAREN statement RPAREN ( ["LPAREN ("]@statement1@["RPAREN )"]@["variable -> (statement)"] )
+    | NOT variable (["NOT NOT"]@variable1@["variable -> NOT variable"] )
 

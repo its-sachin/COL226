@@ -151,10 +151,10 @@ structure MlyValue =
 struct
 datatype svalue = VOID | ntVOID of unit ->  unit
  | CONST of unit ->  (string) | ID of unit ->  (string)
- | START of unit ->  (string list)
- | VARIABLE of unit ->  (string list)
- | OPERATION of unit ->  (string list)
- | IMPLICATION of unit ->  (string list)
+ | formula of unit ->  (string list)
+ | variable of unit ->  (string list)
+ | operation of unit ->  (string list)
+ | implication of unit ->  (string list)
  | statement of unit ->  (string list)
 end
 type svalue = MlyValue.svalue
@@ -205,152 +205,153 @@ fn (i392,defaultPos,stack,
 case (i392,stack)
 of  ( 0, ( ( _, ( _, _, TERM1right)) :: ( _, ( MlyValue.statement 
 statement1, statement1left, _)) :: rest671)) => let val  result = 
-MlyValue.START (fn _ => let val  (statement as statement1) = 
+MlyValue.formula (fn _ => let val  (statement as statement1) = 
 statement1 ()
- in (statement@["TERM ;"])
+ in (statement@["TERM ;","formula -> statement;"])
 end)
  in ( LrTable.NT 4, ( result, statement1left, TERM1right), rest671)
 
 end
-|  ( 1, ( rest671)) => let val  result = MlyValue.START (fn _ => ([]))
+|  ( 1, ( rest671)) => let val  result = MlyValue.formula (fn _ => ([]
+))
  in ( LrTable.NT 4, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 2, ( ( _, ( MlyValue.statement statement2, _, statement2right))
  :: _ :: ( _, ( MlyValue.statement statement1, _, _)) :: _ :: ( _, ( 
-MlyValue.IMPLICATION IMPLICATION1, _, _)) :: ( _, ( _, IF1left, _)) ::
+MlyValue.implication implication1, _, _)) :: ( _, ( _, IF1left, _)) ::
  rest671)) => let val  result = MlyValue.statement (fn _ => let val  (
-IMPLICATION as IMPLICATION1) = IMPLICATION1 ()
+implication as implication1) = implication1 ()
  val  (statement as statement1) = statement1 ()
  val  statement2 = statement2 ()
  in (
- ["IF IF"]@IMPLICATION1@["THEN THEN"]@statement1@["ELSE ELSE"]@statement2@["statement -> IF IMPLICATION THEN statement ELSE statement"] 
+ ["IF IF"]@implication1@["THEN THEN"]@statement1@["ELSE ELSE"]@statement2@["statement -> IF implication THEN statement ELSE statement"] 
 )
 end)
  in ( LrTable.NT 0, ( result, IF1left, statement2right), rest671)
 end
-|  ( 3, ( ( _, ( MlyValue.IMPLICATION IMPLICATION1, IMPLICATION1left, 
-IMPLICATION1right)) :: rest671)) => let val  result = 
-MlyValue.statement (fn _ => let val  (IMPLICATION as IMPLICATION1) = 
-IMPLICATION1 ()
- in (IMPLICATION@["statement -> IMPLICATION"])
+|  ( 3, ( ( _, ( MlyValue.implication implication1, implication1left, 
+implication1right)) :: rest671)) => let val  result = 
+MlyValue.statement (fn _ => let val  (implication as implication1) = 
+implication1 ()
+ in (implication@["statement -> implication"])
 end)
- in ( LrTable.NT 0, ( result, IMPLICATION1left, IMPLICATION1right), 
+ in ( LrTable.NT 0, ( result, implication1left, implication1right), 
 rest671)
 end
-|  ( 4, ( ( _, ( MlyValue.IMPLICATION IMPLICATION1, _, 
-IMPLICATION1right)) :: _ :: ( _, ( MlyValue.OPERATION OPERATION1, 
-OPERATION1left, _)) :: rest671)) => let val  result = 
-MlyValue.IMPLICATION (fn _ => let val  (OPERATION as OPERATION1) = 
-OPERATION1 ()
- val  (IMPLICATION as IMPLICATION1) = IMPLICATION1 ()
+|  ( 4, ( ( _, ( MlyValue.implication implication1, _, 
+implication1right)) :: _ :: ( _, ( MlyValue.operation operation1, 
+operation1left, _)) :: rest671)) => let val  result = 
+MlyValue.implication (fn _ => let val  (operation as operation1) = 
+operation1 ()
+ val  (implication as implication1) = implication1 ()
  in (
- OPERATION1@["IMPLIES IMPLIES"]@IMPLICATION1@["IMPLICATION -> OPERATION IMPLIES IMPLICATION"] 
+ operation1@["IMPLIES IMPLIES"]@implication1@["implication -> operation IMPLIES implication"] 
 )
 end)
- in ( LrTable.NT 1, ( result, OPERATION1left, IMPLICATION1right), 
+ in ( LrTable.NT 1, ( result, operation1left, implication1right), 
 rest671)
 end
-|  ( 5, ( ( _, ( MlyValue.OPERATION OPERATION1, OPERATION1left, 
-OPERATION1right)) :: rest671)) => let val  result = 
-MlyValue.IMPLICATION (fn _ => let val  (OPERATION as OPERATION1) = 
-OPERATION1 ()
- in (OPERATION@["IMPLICATION -> OPERATION"])
+|  ( 5, ( ( _, ( MlyValue.operation operation1, operation1left, 
+operation1right)) :: rest671)) => let val  result = 
+MlyValue.implication (fn _ => let val  (operation as operation1) = 
+operation1 ()
+ in (operation@["implication -> operation"])
 end)
- in ( LrTable.NT 1, ( result, OPERATION1left, OPERATION1right), 
+ in ( LrTable.NT 1, ( result, operation1left, operation1right), 
 rest671)
 end
-|  ( 6, ( ( _, ( MlyValue.VARIABLE VARIABLE1, _, VARIABLE1right)) :: _
- :: ( _, ( MlyValue.OPERATION OPERATION1, OPERATION1left, _)) :: 
-rest671)) => let val  result = MlyValue.OPERATION (fn _ => let val  (
-OPERATION as OPERATION1) = OPERATION1 ()
- val  (VARIABLE as VARIABLE1) = VARIABLE1 ()
+|  ( 6, ( ( _, ( MlyValue.variable variable1, _, variable1right)) :: _
+ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
+operation as operation1) = operation1 ()
+ val  (variable as variable1) = variable1 ()
  in (
- OPERATION1@["AND AND"]@VARIABLE1@["OPERATION -> OPERATION AND VARIABLE"] 
+ operation1@["AND AND"]@variable1@["operation -> operation AND variable"] 
 )
 end)
- in ( LrTable.NT 2, ( result, OPERATION1left, VARIABLE1right), rest671
+ in ( LrTable.NT 2, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 7, ( ( _, ( MlyValue.VARIABLE VARIABLE1, _, VARIABLE1right)) :: _
- :: ( _, ( MlyValue.OPERATION OPERATION1, OPERATION1left, _)) :: 
-rest671)) => let val  result = MlyValue.OPERATION (fn _ => let val  (
-OPERATION as OPERATION1) = OPERATION1 ()
- val  (VARIABLE as VARIABLE1) = VARIABLE1 ()
+|  ( 7, ( ( _, ( MlyValue.variable variable1, _, variable1right)) :: _
+ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
+operation as operation1) = operation1 ()
+ val  (variable as variable1) = variable1 ()
  in (
-OPERATION1@["OR OR"]@VARIABLE1@["OPERATION -> OPERATION XOR VARIABLE"] 
+operation1@["OR OR"]@variable1@["operation -> operation XOR variable"] 
 )
 end)
- in ( LrTable.NT 2, ( result, OPERATION1left, VARIABLE1right), rest671
+ in ( LrTable.NT 2, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 8, ( ( _, ( MlyValue.VARIABLE VARIABLE1, _, VARIABLE1right)) :: _
- :: ( _, ( MlyValue.OPERATION OPERATION1, OPERATION1left, _)) :: 
-rest671)) => let val  result = MlyValue.OPERATION (fn _ => let val  (
-OPERATION as OPERATION1) = OPERATION1 ()
- val  (VARIABLE as VARIABLE1) = VARIABLE1 ()
+|  ( 8, ( ( _, ( MlyValue.variable variable1, _, variable1right)) :: _
+ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
+operation as operation1) = operation1 ()
+ val  (variable as variable1) = variable1 ()
  in (
- OPERATION1@["XOR XOR"]@VARIABLE1@["OPERATION -> OPERATION EQUALS VARIABLE"]
+ operation1@["XOR XOR"]@variable1@["operation -> operation EQUALS variable"]
 )
 end)
- in ( LrTable.NT 2, ( result, OPERATION1left, VARIABLE1right), rest671
+ in ( LrTable.NT 2, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 9, ( ( _, ( MlyValue.VARIABLE VARIABLE1, _, VARIABLE1right)) :: _
- :: ( _, ( MlyValue.OPERATION OPERATION1, OPERATION1left, _)) :: 
-rest671)) => let val  result = MlyValue.OPERATION (fn _ => let val  (
-OPERATION as OPERATION1) = OPERATION1 ()
- val  (VARIABLE as VARIABLE1) = VARIABLE1 ()
+|  ( 9, ( ( _, ( MlyValue.variable variable1, _, variable1right)) :: _
+ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
+operation as operation1) = operation1 ()
+ val  (variable as variable1) = variable1 ()
  in (
- OPERATION1@["EQUALS EQUALS"]@VARIABLE1@["OPERATION -> OPERATION EQUALS VARIABLE"] 
+ operation1@["EQUALS EQUALS"]@variable1@["operation -> operation EQUALS variable"] 
 )
 end)
- in ( LrTable.NT 2, ( result, OPERATION1left, VARIABLE1right), rest671
+ in ( LrTable.NT 2, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 10, ( ( _, ( MlyValue.VARIABLE VARIABLE1, VARIABLE1left, 
-VARIABLE1right)) :: rest671)) => let val  result = MlyValue.OPERATION
- (fn _ => let val  (VARIABLE as VARIABLE1) = VARIABLE1 ()
- in (VARIABLE@["OPERATION -> VARIABLE"])
+|  ( 10, ( ( _, ( MlyValue.variable variable1, variable1left, 
+variable1right)) :: rest671)) => let val  result = MlyValue.operation
+ (fn _ => let val  (variable as variable1) = variable1 ()
+ in (variable@["operation -> variable"])
 end)
- in ( LrTable.NT 2, ( result, VARIABLE1left, VARIABLE1right), rest671)
+ in ( LrTable.NT 2, ( result, variable1left, variable1right), rest671)
 
 end
 |  ( 11, ( ( _, ( MlyValue.ID ID1, ID1left, ID1right)) :: rest671)) =>
- let val  result = MlyValue.VARIABLE (fn _ => let val  (ID as ID1) = 
+ let val  result = MlyValue.variable (fn _ => let val  (ID as ID1) = 
 ID1 ()
- in (["ID "^ ID1, "VARIABLE -> ID"])
+ in (["ID "^ ID1])
 end)
  in ( LrTable.NT 3, ( result, ID1left, ID1right), rest671)
 end
 |  ( 12, ( ( _, ( MlyValue.CONST CONST1, CONST1left, CONST1right)) :: 
-rest671)) => let val  result = MlyValue.VARIABLE (fn _ => let val  (
+rest671)) => let val  result = MlyValue.variable (fn _ => let val  (
 CONST as CONST1) = CONST1 ()
- in (["CONST "^CONST1, "VARIABLE -> CONST"])
+ in (["CONST "^CONST1])
 end)
  in ( LrTable.NT 3, ( result, CONST1left, CONST1right), rest671)
 end
 |  ( 13, ( ( _, ( _, _, RPAREN1right)) :: ( _, ( MlyValue.statement 
 statement1, _, _)) :: ( _, ( _, LPAREN1left, _)) :: rest671)) => let
- val  result = MlyValue.VARIABLE (fn _ => let val  (statement as 
+ val  result = MlyValue.variable (fn _ => let val  (statement as 
 statement1) = statement1 ()
  in (
- ["LPAREN ("]@statement1@["RPAREN )"]@["VARIABLE -> (statement)"] )
+ ["LPAREN ("]@statement1@["RPAREN )"]@["variable -> (statement)"] )
 
 end)
  in ( LrTable.NT 3, ( result, LPAREN1left, RPAREN1right), rest671)
 end
-|  ( 14, ( ( _, ( MlyValue.VARIABLE VARIABLE1, _, VARIABLE1right)) :: 
+|  ( 14, ( ( _, ( MlyValue.variable variable1, _, variable1right)) :: 
 ( _, ( _, NOT1left, _)) :: rest671)) => let val  result = 
-MlyValue.VARIABLE (fn _ => let val  (VARIABLE as VARIABLE1) = 
-VARIABLE1 ()
- in (["NOT NOT"]@VARIABLE1@["VARIABLE -> NOT VARIABLE"] )
+MlyValue.variable (fn _ => let val  (variable as variable1) = 
+variable1 ()
+ in (["NOT NOT"]@variable1@["variable -> NOT variable"] )
 end)
- in ( LrTable.NT 3, ( result, NOT1left, VARIABLE1right), rest671)
+ in ( LrTable.NT 3, ( result, NOT1left, variable1right), rest671)
 end
 | _ => raise (mlyAction i392)
 end
 val void = MlyValue.VOID
-val extract = fn a => (fn MlyValue.START x => x
+val extract = fn a => (fn MlyValue.formula x => x
 | _ => let exception ParseInternal
 	in raise ParseInternal end) a ()
 end

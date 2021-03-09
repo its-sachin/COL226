@@ -6,11 +6,12 @@ structure BoolParser = 	Join(structure LrParser = LrParser
      	       				structure ParserData = BoolLrVals.ParserData
      	       				structure Lex = BoolLex)
 
+
 fun initLex() = 
-	BoolLex.UserDeclarations.pos := 0;
-	BoolLex.UserDeclarations.line := 1;
-	BoolLex.UserDeclarations.isError := false;
-	BoolLex.UserDeclarations.array := Array.array(0,Term.IF("a"));
+	((((BoolLex.UserDeclarations.pos := 0;
+	BoolLex.UserDeclarations.line := 1);
+	BoolLex.UserDeclarations.isError := false);
+	BoolLex.UserDeclarations.array := Array.array(0,Term.IF("a"))))
 
 fun readFile infile =
     let val done = ref false
@@ -21,12 +22,13 @@ fun readFile infile =
 	lexer)
     end
 
-fun lexerRes() = 
+val lexerRes = fn _ =>
 	let 
 		fun aTol arr = Array.foldr (op ::) [] arr;
 		val list = aTol (!BoolLex.UserDeclarations.array)
 	in
-		list
+		if (!BoolLex.UserDeclarations.isError = true) then raise LexerError
+		else list
 	end
 
 fun invoke lexstream =
@@ -39,17 +41,37 @@ fun invoke lexstream =
 		end
 
 
-fun parse (lexer) =
-    let val dummyEOF = BoolLrVals.Tokens.EOF(0,0)
+fun parseRes(lexer) =
+    let
     	val (result, lexer) = invoke lexer
-	val (nextToken, lexer) = BoolParser.Stream.get lexer
+		val (nextToken, lexer) = BoolParser.Stream.get lexer
     in
 		if (!BoolLex.UserDeclarations.isError = true) then raise LexerError
         else (result)
     end
 
+fun printLex(list,str) = 
+	case list of 
+	[] => TextIO.output(TextIO.stdOut,"["^str^"]\n")
+	| [x] => printLex([],str^Term.value(x))
+	| x::xs => printLex(xs,str^Term.value(x)^",")
 
-val parseString =   parse o readFile
+fun printParse(list,str) = 
+		case list of 
+		[] => TextIO.output(TextIO.stdOut,"["^str^"]\n")
+		| [x] => printParse([],str^"\""^x^"\"")
+		(* | x::xs => printParse(xs,str^"\""^x^"\",") *)
+		| x::xs => printParse(xs,str^x^",")
+		
 
+fun compile input = 
+	let 
+		val lexer = readFile input
+		val parseRes = parseRes(lexer)
+		val lexerRes = lexerRes 0
 
+	in
+	(printLex(lexerRes,"");
+	printParse(parseRes,""))
+	end
 

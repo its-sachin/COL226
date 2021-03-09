@@ -1,8 +1,8 @@
 
 state 0:
 
-	START : . statement TERM 
-	START : .  (reduce by rule 1)
+	formula : . statement TERM 
+	formula : .  (reduce by rule 1)
 
 	ID	shift 9
 	CONST	shift 8
@@ -11,17 +11,17 @@ state 0:
 	LPAREN	shift 5
 
 	statement	goto 4
-	IMPLICATION	goto 3
-	OPERATION	goto 2
-	VARIABLE	goto 1
-	START	goto 29
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
+	formula	goto 29
 
 	.	reduce by rule 1
 
 
 state 1:
 
-	OPERATION : VARIABLE .  (reduce by rule 10)
+	operation : variable .  (reduce by rule 10)
 
 
 
@@ -30,12 +30,12 @@ state 1:
 
 state 2:
 
-	IMPLICATION : OPERATION . IMPLIES IMPLICATION 
-	IMPLICATION : OPERATION .  (reduce by rule 5)
-	OPERATION : OPERATION . AND VARIABLE 
-	OPERATION : OPERATION . OR VARIABLE 
-	OPERATION : OPERATION . XOR VARIABLE 
-	OPERATION : OPERATION . EQUALS VARIABLE 
+	implication : operation . IMPLIES implication 
+	implication : operation .  (reduce by rule 5)
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
 
 	IMPLIES	shift 14
 	AND	shift 13
@@ -49,7 +49,7 @@ state 2:
 
 state 3:
 
-	statement : IMPLICATION .  (reduce by rule 3)
+	statement : implication .  (reduce by rule 3)
 
 
 
@@ -58,7 +58,7 @@ state 3:
 
 state 4:
 
-	START : statement . TERM 
+	formula : statement . TERM 
 
 	TERM	shift 15
 
@@ -68,7 +68,7 @@ state 4:
 
 state 5:
 
-	VARIABLE : LPAREN . statement RPAREN 
+	variable : LPAREN . statement RPAREN 
 
 	ID	shift 9
 	CONST	shift 8
@@ -77,46 +77,46 @@ state 5:
 	LPAREN	shift 5
 
 	statement	goto 16
-	IMPLICATION	goto 3
-	OPERATION	goto 2
-	VARIABLE	goto 1
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
 
 	.	error
 
 
 state 6:
 
-	statement : IF . IMPLICATION THEN statement ELSE statement 
+	statement : IF . implication THEN statement ELSE statement 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	IMPLICATION	goto 17
-	OPERATION	goto 2
-	VARIABLE	goto 1
+	implication	goto 17
+	operation	goto 2
+	variable	goto 1
 
 	.	error
 
 
 state 7:
 
-	VARIABLE : NOT . VARIABLE 
+	variable : NOT . variable 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	VARIABLE	goto 18
+	variable	goto 18
 
 	.	error
 
 
 state 8:
 
-	VARIABLE : CONST .  (reduce by rule 12)
+	variable : CONST .  (reduce by rule 12)
 
 
 
@@ -125,7 +125,7 @@ state 8:
 
 state 9:
 
-	VARIABLE : ID .  (reduce by rule 11)
+	variable : ID .  (reduce by rule 11)
 
 
 
@@ -134,79 +134,79 @@ state 9:
 
 state 10:
 
-	OPERATION : OPERATION EQUALS . VARIABLE 
+	operation : operation EQUALS . variable 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	VARIABLE	goto 19
+	variable	goto 19
 
 	.	error
 
 
 state 11:
 
-	OPERATION : OPERATION XOR . VARIABLE 
+	operation : operation XOR . variable 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	VARIABLE	goto 20
+	variable	goto 20
 
 	.	error
 
 
 state 12:
 
-	OPERATION : OPERATION OR . VARIABLE 
+	operation : operation OR . variable 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	VARIABLE	goto 21
+	variable	goto 21
 
 	.	error
 
 
 state 13:
 
-	OPERATION : OPERATION AND . VARIABLE 
+	operation : operation AND . variable 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	VARIABLE	goto 22
+	variable	goto 22
 
 	.	error
 
 
 state 14:
 
-	IMPLICATION : OPERATION IMPLIES . IMPLICATION 
+	implication : operation IMPLIES . implication 
 
 	ID	shift 9
 	CONST	shift 8
 	NOT	shift 7
 	LPAREN	shift 5
 
-	IMPLICATION	goto 23
-	OPERATION	goto 2
-	VARIABLE	goto 1
+	implication	goto 23
+	operation	goto 2
+	variable	goto 1
 
 	.	error
 
 
 state 15:
 
-	START : statement TERM .  (reduce by rule 0)
+	formula : statement TERM .  (reduce by rule 0)
 
 
 
@@ -215,7 +215,7 @@ state 15:
 
 state 16:
 
-	VARIABLE : LPAREN statement . RPAREN 
+	variable : LPAREN statement . RPAREN 
 
 	RPAREN	shift 24
 
@@ -225,7 +225,7 @@ state 16:
 
 state 17:
 
-	statement : IF IMPLICATION . THEN statement ELSE statement 
+	statement : IF implication . THEN statement ELSE statement 
 
 	THEN	shift 25
 
@@ -235,7 +235,7 @@ state 17:
 
 state 18:
 
-	VARIABLE : NOT VARIABLE .  (reduce by rule 14)
+	variable : NOT variable .  (reduce by rule 14)
 
 
 
@@ -244,7 +244,7 @@ state 18:
 
 state 19:
 
-	OPERATION : OPERATION EQUALS VARIABLE .  (reduce by rule 9)
+	operation : operation EQUALS variable .  (reduce by rule 9)
 
 
 
@@ -253,7 +253,7 @@ state 19:
 
 state 20:
 
-	OPERATION : OPERATION XOR VARIABLE .  (reduce by rule 8)
+	operation : operation XOR variable .  (reduce by rule 8)
 
 
 
@@ -262,7 +262,7 @@ state 20:
 
 state 21:
 
-	OPERATION : OPERATION OR VARIABLE .  (reduce by rule 7)
+	operation : operation OR variable .  (reduce by rule 7)
 
 
 
@@ -271,7 +271,7 @@ state 21:
 
 state 22:
 
-	OPERATION : OPERATION AND VARIABLE .  (reduce by rule 6)
+	operation : operation AND variable .  (reduce by rule 6)
 
 
 
@@ -280,7 +280,7 @@ state 22:
 
 state 23:
 
-	IMPLICATION : OPERATION IMPLIES IMPLICATION .  (reduce by rule 4)
+	implication : operation IMPLIES implication .  (reduce by rule 4)
 
 
 
@@ -289,7 +289,7 @@ state 23:
 
 state 24:
 
-	VARIABLE : LPAREN statement RPAREN .  (reduce by rule 13)
+	variable : LPAREN statement RPAREN .  (reduce by rule 13)
 
 
 
@@ -298,7 +298,7 @@ state 24:
 
 state 25:
 
-	statement : IF IMPLICATION THEN . statement ELSE statement 
+	statement : IF implication THEN . statement ELSE statement 
 
 	ID	shift 9
 	CONST	shift 8
@@ -307,16 +307,16 @@ state 25:
 	LPAREN	shift 5
 
 	statement	goto 26
-	IMPLICATION	goto 3
-	OPERATION	goto 2
-	VARIABLE	goto 1
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
 
 	.	error
 
 
 state 26:
 
-	statement : IF IMPLICATION THEN statement . ELSE statement 
+	statement : IF implication THEN statement . ELSE statement 
 
 	ELSE	shift 27
 
@@ -326,7 +326,7 @@ state 26:
 
 state 27:
 
-	statement : IF IMPLICATION THEN statement ELSE . statement 
+	statement : IF implication THEN statement ELSE . statement 
 
 	ID	shift 9
 	CONST	shift 8
@@ -335,16 +335,16 @@ state 27:
 	LPAREN	shift 5
 
 	statement	goto 28
-	IMPLICATION	goto 3
-	OPERATION	goto 2
-	VARIABLE	goto 1
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
 
 	.	error
 
 
 state 28:
 
-	statement : IF IMPLICATION THEN statement ELSE statement .  (reduce by rule 2)
+	statement : IF implication THEN statement ELSE statement .  (reduce by rule 2)
 
 
 
