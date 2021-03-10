@@ -1,10 +1,12 @@
 formula := statement ";".
-statement := "IF" implication "THEN" statement "ELSE" statement.
-            | statement "IMPLIES" statement 
-            | statement "AND" statement
-            | statement "OR" statement
-            | statement "XOR" statement
-            | statement "EQUALS" statement
-            | variable.
+statement   := "IF" statement "THEN" statement "ELSE" statement
+            |  implication.
+implication := operation "IMPLIES" implication
+            |  operation.
+operation   := operation "AND" variable 
+            |  operation "OR" variable
+            |  operation "XOR" variable
+            |  operation "EQUALS" variable
+            |  variable.
 variable := "ID" | "CONST" | "(" statement ")" | "NOT" variable.
 
