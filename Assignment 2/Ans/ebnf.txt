@@ -1,0 +1,10 @@
+formula := statement ";".
+statement := "IF" implication "THEN" statement "ELSE" statement.
+            | statement "IMPLIES" statement 
+            | statement "AND" statement
+            | statement "OR" statement
+            | statement "XOR" statement
+            | statement "EQUALS" statement
+            | variable.
+variable := "ID" | "CONST" | "(" statement ")" | "NOT" variable.
+

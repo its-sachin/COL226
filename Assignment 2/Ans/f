@@ -1,2 +1,5 @@
- A AND B;
 
+
+
+
+IF x EQUALS y THEN TRUE ELSE a XOR b;
