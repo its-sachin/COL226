@@ -94,5 +94,14 @@ fun compile input =
 	if (!doneOnce = false) then (printLex(lexerRes); printParse(parseRes))
 	else printParse(parseRes)
 	end
+
+val args = CommandLine.arguments()
+val a = case args of [] => ""
+	| [x] => x
+	| x::xs => x
+
+val _ = 
+	if (a = "") then TextIO.output(TextIO.stdOut,"Enter the path of file.\n")
+	else compile a
  	
 
