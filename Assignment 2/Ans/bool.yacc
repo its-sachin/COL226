@@ -29,7 +29,7 @@
 
 %%
 
-formula: statement TERM (statement@["TERM ;","formula -> statement;"])
+formula: statement TERM (statement@["TERM ;"]@["formula -> statement;"])
     | ([])
 
 statement: IF statement THEN statement ELSE statement ( ["IF IF"]@statement1@["THEN THEN"]@statement2@["ELSE ELSE"]@statement3@["statement -> IF statement THEN statement ELSE statement"] )

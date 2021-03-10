@@ -55,17 +55,19 @@ fun printParse(list) =
 	let fun printParseR(list,str) = 
 			case list of 
 			[] => TextIO.output(TextIO.stdOut,"["^str^"]\n")
-			| [x] => printParseR([],str^"\""^x^"\"")
+			(* | [x] => printParseR([],str^"\""^x^"\"") *)
+			| [x] => printParseR([],str^x)
 			(* | x::xs => printParseR(xs,str^"\""^x^"\",") *)
 			| x::xs => printParseR(xs,str^x^",")
 		in
 		printParseR(list,"")
 		end
-val syntaxError = ref ""
+
 
 fun invoke instream =
 			let 
 				val done = ref false
+				val syntaxError = ref ""
 				val lexstream =  BoolParser.makeLexer (fn _ => if (!done) then "" else (done:=true; TextIO.input instream))
 				fun print_error (s,pos:int, _) =
 				(	if (!BoolLex.UserDeclarations.isLast = true) then (printLex(lexerRes ()); TextIO.output(TextIO.stdOut, !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n"))

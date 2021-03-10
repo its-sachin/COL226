@@ -4,113 +4,209 @@ state 0:
 	formula : . statement TERM 
 	formula : .  (reduce by rule 1)
 
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
 
-	statement	goto 2
+	statement	goto 4
+	implication	goto 3
+	operation	goto 2
 	variable	goto 1
-	formula	goto 27
+	formula	goto 29
 
 	.	reduce by rule 1
 
 
 state 1:
 
-	statement : variable .  (reduce by rule 8)
-
-
-
-	.	reduce by rule 8
-
-
-state 2:
-
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-	formula : statement . TERM 
-
-	IMPLIES	shift 13
-	AND	shift 12
-	OR	shift 11
-	XOR	shift 10
-	EQUALS	shift 9
-	TERM	shift 8
-
-
-	.	error
-
-
-state 3:
-
-	variable : LPAREN . statement RPAREN 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 14
-	variable	goto 1
-
-	.	error
-
-
-state 4:
-
-	statement : IF . statement THEN statement ELSE statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 15
-	variable	goto 1
-
-	.	error
-
-
-state 5:
-
-	variable : NOT . variable 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	LPAREN	shift 3
-
-	variable	goto 16
-
-	.	error
-
-
-state 6:
-
-	variable : CONST .  (reduce by rule 10)
+	operation : variable .  (reduce by rule 10)
 
 
 
 	.	reduce by rule 10
 
 
+state 2:
+
+	implication : operation . IMPLIES implication 
+	implication : operation .  (reduce by rule 5)
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
+
+	IMPLIES	shift 14
+	AND	shift 13
+	OR	shift 12
+	XOR	shift 11
+	EQUALS	shift 10
+
+
+	.	reduce by rule 5
+
+
+state 3:
+
+	statement : implication .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 4:
+
+	formula : statement . TERM 
+
+	TERM	shift 15
+
+
+	.	error
+
+
+state 5:
+
+	variable : LPAREN . statement RPAREN 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	statement	goto 16
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
+
+	.	error
+
+
+state 6:
+
+	statement : IF . statement THEN statement ELSE statement 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	statement	goto 17
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
+
+	.	error
+
+
 state 7:
 
-	variable : ID .  (reduce by rule 9)
+	variable : NOT . variable 
 
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
 
+	variable	goto 18
 
-	.	reduce by rule 9
+	.	error
 
 
 state 8:
+
+	variable : CONST .  (reduce by rule 12)
+
+
+
+	.	reduce by rule 12
+
+
+state 9:
+
+	variable : ID .  (reduce by rule 11)
+
+
+
+	.	reduce by rule 11
+
+
+state 10:
+
+	operation : operation EQUALS . variable 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	variable	goto 19
+
+	.	error
+
+
+state 11:
+
+	operation : operation XOR . variable 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	variable	goto 20
+
+	.	error
+
+
+state 12:
+
+	operation : operation OR . variable 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	variable	goto 21
+
+	.	error
+
+
+state 13:
+
+	operation : operation AND . variable 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	variable	goto 22
+
+	.	error
+
+
+state 14:
+
+	implication : operation IMPLIES . implication 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	LPAREN	shift 5
+
+	implication	goto 23
+	operation	goto 2
+	variable	goto 1
+
+	.	error
+
+
+state 15:
 
 	formula : statement TERM .  (reduce by rule 0)
 
@@ -119,266 +215,102 @@ state 8:
 	.	reduce by rule 0
 
 
-state 9:
-
-	statement : statement EQUALS . statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 17
-	variable	goto 1
-
-	.	error
-
-
-state 10:
-
-	statement : statement XOR . statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 18
-	variable	goto 1
-
-	.	error
-
-
-state 11:
-
-	statement : statement OR . statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 19
-	variable	goto 1
-
-	.	error
-
-
-state 12:
-
-	statement : statement AND . statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 20
-	variable	goto 1
-
-	.	error
-
-
-state 13:
-
-	statement : statement IMPLIES . statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 21
-	variable	goto 1
-
-	.	error
-
-
-state 14:
-
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-	variable : LPAREN statement . RPAREN 
-
-	IMPLIES	shift 13
-	AND	shift 12
-	OR	shift 11
-	XOR	shift 10
-	EQUALS	shift 9
-	RPAREN	shift 22
-
-
-	.	error
-
-
-state 15:
-
-	statement : IF statement . THEN statement ELSE statement 
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-
-	IMPLIES	shift 13
-	AND	shift 12
-	OR	shift 11
-	XOR	shift 10
-	EQUALS	shift 9
-	THEN	shift 23
-
-
-	.	error
-
-
 state 16:
 
-	variable : NOT variable .  (reduce by rule 12)
+	variable : LPAREN statement . RPAREN 
+
+	RPAREN	shift 24
 
 
-
-	.	reduce by rule 12
+	.	error
 
 
 state 17:
 
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-	statement : statement EQUALS statement .  (reduce by rule 7)
+	statement : IF statement . THEN statement ELSE statement 
+
+	THEN	shift 25
+
+
+	.	error
+
+
+state 18:
+
+	variable : NOT variable .  (reduce by rule 14)
+
+
+
+	.	reduce by rule 14
+
+
+state 19:
+
+	operation : operation EQUALS variable .  (reduce by rule 9)
+
+
+
+	.	reduce by rule 9
+
+
+state 20:
+
+	operation : operation XOR variable .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
+state 21:
+
+	operation : operation OR variable .  (reduce by rule 7)
 
 
 
 	.	reduce by rule 7
 
 
-state 18:
+state 22:
 
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement XOR statement .  (reduce by rule 6)
-	statement : statement . EQUALS statement 
+	operation : operation AND variable .  (reduce by rule 6)
 
 
 
 	.	reduce by rule 6
 
 
-state 19:
+state 23:
 
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement OR statement .  (reduce by rule 5)
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-
-
-
-	.	reduce by rule 5
-
-
-state 20:
-
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement AND statement .  (reduce by rule 4)
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
+	implication : operation IMPLIES implication .  (reduce by rule 4)
 
 
 
 	.	reduce by rule 4
 
 
-state 21:
-
-	statement : statement . IMPLIES statement 
-	statement : statement IMPLIES statement .  (reduce by rule 3)
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-
-	IMPLIES	shift 13
-	AND	shift 12
-	OR	shift 11
-	XOR	shift 10
-	EQUALS	shift 9
-
-
-	.	reduce by rule 3
-
-
-state 22:
-
-	variable : LPAREN statement RPAREN .  (reduce by rule 11)
-
-
-
-	.	reduce by rule 11
-
-
-state 23:
-
-	statement : IF statement THEN . statement ELSE statement 
-
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
-
-	statement	goto 24
-	variable	goto 1
-
-	.	error
-
-
 state 24:
 
-	statement : IF statement THEN statement . ELSE statement 
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
-
-	IMPLIES	shift 13
-	AND	shift 12
-	OR	shift 11
-	XOR	shift 10
-	EQUALS	shift 9
-	ELSE	shift 25
+	variable : LPAREN statement RPAREN .  (reduce by rule 13)
 
 
-	.	error
+
+	.	reduce by rule 13
 
 
 state 25:
 
-	statement : IF statement THEN statement ELSE . statement 
+	statement : IF statement THEN . statement ELSE statement 
 
-	ID	shift 7
-	CONST	shift 6
-	NOT	shift 5
-	IF	shift 4
-	LPAREN	shift 3
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
 
 	statement	goto 26
+	implication	goto 3
+	operation	goto 2
 	variable	goto 1
 
 	.	error
@@ -386,24 +318,42 @@ state 25:
 
 state 26:
 
-	statement : IF statement THEN statement ELSE statement .  (reduce by rule 2)
-	statement : statement . IMPLIES statement 
-	statement : statement . AND statement 
-	statement : statement . OR statement 
-	statement : statement . XOR statement 
-	statement : statement . EQUALS statement 
+	statement : IF statement THEN statement . ELSE statement 
 
-	IMPLIES	shift 13
-	AND	shift 12
-	OR	shift 11
-	XOR	shift 10
-	EQUALS	shift 9
+	ELSE	shift 27
+
+
+	.	error
+
+
+state 27:
+
+	statement : IF statement THEN statement ELSE . statement 
+
+	ID	shift 9
+	CONST	shift 8
+	NOT	shift 7
+	IF	shift 6
+	LPAREN	shift 5
+
+	statement	goto 28
+	implication	goto 3
+	operation	goto 2
+	variable	goto 1
+
+	.	error
+
+
+state 28:
+
+	statement : IF statement THEN statement ELSE statement .  (reduce by rule 2)
+
 
 
 	.	reduce by rule 2
 
 
-state 27:
+state 29:
 
 
 	EOF	accept
@@ -411,5 +361,5 @@ state 27:
 
 	.	error
 
-49 of 117 action table entries left after compaction
-22 goto table entries
+24 of 89 action table entries left after compaction
+29 goto table entries

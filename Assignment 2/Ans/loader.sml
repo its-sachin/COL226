@@ -4,4 +4,4 @@ use "Term.sml";
 use "bool.yacc.sig";
 use "bool.yacc.sml";
 use "bool.lex.sml";
-use "load-calc.sml";
+use "combine.sml";
