@@ -45,7 +45,6 @@ datatype value = IntVal of int
 				| FunVal of id*types*types*exp
 
 type symbolTable = (id * value) list
-type funTable = (id * types * types * exp) list
 
 type typeTable = (id*types) list
 
@@ -71,6 +70,8 @@ fun checkNum(a:exp):exp =
 
 
 fun appendID (var:id, v:value, list:symbolTable) = (var,v)::list
+fun appendType(var:id, t:types, list:typeTable) = (var,t)::list
+
 
 fun findSymbol(var:id, env:symbolTable) =
     case List.find(fn (x, _) => x = var) env of

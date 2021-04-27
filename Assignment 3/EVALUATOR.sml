@@ -85,66 +85,65 @@ end
 
 and
 
-checkFun(e:exp,t:typeTable,t2:types,s:symbolTable):bool= 
-    case t1 of 
-    Int => (
-        case checkExp(e,appendID(i,IntVal(0),s)) of 
-        IntVal(i1) => (if (t2 = Int) then true
-            else  false)
-        | BoolVal(c) => (if (t2 = Bool) then true
-            else  false)
-        | FunVal(i1,t11,t12,e11) => (if (t2 = t12) then true
-            else  false)
-    )
+getType(var:value):types = 
+    case var of 
+    IntVal(i) => Int
+    | BoolVal(i) => Bool
+    | FunVal(i,t1,t2,e) => t2
 
-    | Bool => (
-        case checkExp(e,appendID(i,BoolVal(True),s)) of 
-        IntVal(i1) => (if (t2 = Int) then true
-            else  false)
-        | BoolVal(c) => (if (t2 = Bool) then true
-            else  false)
-        | FunVal(i1,t11,t12,e11) => (if (t2 = t12) then true
-            else  false)
-    )
+and
 
-    | Arrow(t11,t12) => (
-        case e of 
-        AppExp(e1,e2) =>(
-            (case e1 of 
-            VarExp(a) => if (i=a) then checkFun(e2,i,t1,cutOut(t1,t2),s) else
-                (case findSymbol(a,s) of
-                FunVal(i2,t21,t22,e21) => (if (t22 = t2) then 
-                    checkFun(e2,i,t1,t21,s)
-                    else false)
-                | _ => false)
-            | FnAbs(i2,t21,t22,e2) => (if (t22 = t2) then 
-            checkFun(e2,i,t1,t21,s)
-            else false)
-            | _ => false)
-        )
-        | NumExp(a) => if (t2 = Int) then true else false
-        | ConstExp(a) => if (t2 = Bool) then true else false
-        | UniopExp(oper,e1) => 
-            (case oper of 
-            NOT => if (t2 = Bool) then checkFun(e1,i,t1,Bool,s)
-                else false
-            | NEGATE => if (t2 = Int) then checkFun(e1,i,t1,Int,s)
-                else false)
-        | VarExp(a) => if (i=a) then (if (t1=t2) then true else false) else 
-            (case findSymbol(a,s) of 
-            IntVal(i1) => if (t2=Int) then true else false
-            | BoolVal(c) => if (t2=Bool) then true else false
-            | FunVal(i2,t21,t22,e21) => if (t22 = t2) then checkFun())
-        | IbinopExp(oper, e1,e2) => if (t2 = Int) then checkFun(e1,i,t1,Int,s) andalso checkFun(e2,i,t1,Int,s) else false
-        | BbinopExp(oper, e1,e2) => if (t2 = Bool) then checkFun(e1,i,t1,Bool,s) andalso checkFun(e2,i,t1,Bool,s) else false
-        | LetExp(i1,e1,e2) => (case e1 of
-            FunAbs(_,_,_,_,_) => raise TypeError
-            | _ => checkFun(e2, i,t1,t2,appendID(i1,checkExp(e1,s),s)))
-        | FnAbs(i,t1,t2,e1) => ..
-        | IfExp(e1,e2,e3) => checkFun(e1,i,t1,Bool,s) andalso ((checkFun(e2,i,t1,Bool,s) andalso checkFun(e3,i,t1,Bool,s)) orelse ((checkFun(e2,i,t1,Int,s) andalso checkFun(e3,i,t1,Int,s))) 
-        | _ => false
-    )
+findType(var:id, env:typeTable) = 
+	case List.find(fn (x, _) => x = var) env of
+		SOME (x, v)   => v
+	|   NONE => raise TypeError
+and
 
+initType(env:symbolTable) = 
+	let 
+		fun initTypeRec(env,ans) = 
+			case env of
+			[] => ans
+			| [x] => getType(x)::ans
+            | x::xs  => initTypeRec(xs,getType(x)::ans) 
+
+	in
+
+    initTypeRec(env,[])
+
+    end
+
+and
+
+checkType(e:exp,t:typeTable,t2:types,s:symbolTable):bool= 
+    case e of 
+    NumExp(_) => if (t2 = Int) then true else raise TypeError
+    | VarExp(i) => if (findType(i,t) = t2) then true else raise TypeError
+    | ConstExp(_) => if (t2 = Bool) then true else raise TypeError
+    | UniopExp(oper,e1) => (
+        case oper of 
+        Not => if (t2 = Bool) then checkType(e1,t,Bool,s) else raise TypeError
+        | Negate => if (t2 = Int) then checkType(e1,t,Int,s) else raise TypeError
+    )
+    | IbinopExp(_,e1,e2) => if (t2=Int) then checkType(e1,t,Int,s) andalso checkType(e2,t,Int,s) else raise TypeError
+    | BbinopExp(_,e1,e2) => if (t2=Bool) then checkType(e1,t,Bool,s) andalso checkType(e2,t,Bool,s) else raise TypeError
+    | LetExp(i,e1,e2) => 
+    | IfExp(e1,e2,e3) => if (checkType(e1,t,Bool,s) then (
+        (checkType(e2,t,t2,s) andalso checkType(e3,t,t2,s))
+    ) else raise TypeError)
+    | FnAbs(i,t21,t22,e2) => if (t2=t22) then (checkType(e2,appendType(t,t21),t2,s)) else raise TypeError
+    | FunAbs(_,_,_,_,_) => raise TypeError
+    | AppExp(e1,e2) => (
+        case e1 of 
+        VarExp(i) => (
+            case findSymbol(i,s) of
+            FunVal(i1,t11,t12,e11) => checkType(AppExp(FnAbs(i1,t11,t12,e11),e2),t,t2,s)
+            | _ => raise TypeError
+            )
+        | FnAbs(i1,t11,t12,e11) => if (t12 = t2) then checkType(e2,t,t11,s) andalso checkType(e11,appendType(i1,t11),t12,s) else raise TypeError
+        |
+
+    )
 and
 
 
@@ -188,7 +187,7 @@ checkExp(e:exp, s:symbolTable):value =
                             | _ => raise TypeError)
                         | _ => raise TypeError))
         
-        | FnAbs(i,t1,t2,e1) => if (checkFun(e1,i,t1,t2,s)) then FunVal(i,t1,t2,e1) else raise TypeError
+        | FnAbs(i,t1,t2,e1) => if (checkType(e1,i,t1,t2,s)) then FunVal(i,t1,t2,e1) else raise TypeError
 
         | FunAbs(_,_,_,_,_) => raise TypeError 
 
@@ -235,7 +234,7 @@ checkExp(e:exp, s:symbolTable):value =
                     | _ => raise TypeError)
                 | FunVal(i21,t21,t22,e21) => 
                     (case checkExp(e3,s) of
-                    FunVal(i31,t31,t32,e31) => if ( t22 = t32) then 
+                    FunVal(i31,t31,t32,e31) => if ( t22 = t32 andalso t21 = t31) then 
                         (case c of 
                         True => FunVal(i21,t21,t22,e21)
                         | False => FunVal(i31,t31,t32,e31))
@@ -250,12 +249,12 @@ and
 
 evalFile(f:formula, s:symbolTable):value list = case f of 
     OneExp(e) => (case e of 
-        FunAbs(i1,i2,t1,t2,e1) => if (checkFun(e1,i2,t1,t2,s)) then [FunVal(i2,t1,t2,e1)]
+        FunAbs(i1,i2,t1,t2,e1) => if (checkType(e1,i2,t1,t2,s)) then [FunVal(i2,t1,t2,e1)]
             else raise TypeError
         | _ => [checkExp(e,s)])
 
     | AllExp(e,f1) => (case e of 
-        FunAbs(i1,i2,t1,t2,e1) => if (checkFun(e1,i2,t1,t2,s)) then
+        FunAbs(i1,i2,t1,t2,e1) => if (checkType(e1,i2,t1,t2,s)) then
             (let val func = FunVal(i2,t1,t2,e1) 
                 in 
                     func::evalFile(f1,appendID(i1,func,s)) 
