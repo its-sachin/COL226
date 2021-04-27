@@ -1,0 +1,6 @@
+fun func1 (f:int->int):int => (f 1) ;
+let 
+	f  = fn(x:int): int=>x PLUS 1
+in
+	(func1 f)
+end

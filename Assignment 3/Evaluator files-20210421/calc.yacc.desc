@@ -1,0 +1,320 @@
+
+state 0:
+
+	START : . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 1
+	START	goto 23
+
+	.	error
+
+
+state 1:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : EXP . EQ EXP 
+	START : EXP .  (reduce by rule 0)
+
+	PLUS	shift 9
+	TIMES	shift 8
+	SUB	shift 7
+	DIV	shift 6
+	EQ	shift 5
+
+
+	.	reduce by rule 0
+
+
+state 2:
+
+	EXP : LET . DECL IN EXP END 
+
+	VAL	shift 11
+
+	DECL	goto 10
+
+	.	error
+
+
+state 3:
+
+	EXP : NUM .  (reduce by rule 2)
+
+
+
+	.	reduce by rule 2
+
+
+state 4:
+
+	EXP : ID .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 5:
+
+	EXP : EXP EQ . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 12
+
+	.	error
+
+
+state 6:
+
+	EXP : EXP DIV . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 13
+
+	.	error
+
+
+state 7:
+
+	EXP : EXP SUB . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 14
+
+	.	error
+
+
+state 8:
+
+	EXP : EXP TIMES . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 15
+
+	.	error
+
+
+state 9:
+
+	EXP : EXP PLUS . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 16
+
+	.	error
+
+
+state 10:
+
+	EXP : LET DECL . IN EXP END 
+
+	IN	shift 17
+
+
+	.	error
+
+
+state 11:
+
+	DECL : VAL . ID EQ EXP 
+
+	ID	shift 18
+
+
+	.	error
+
+
+state 12:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : EXP . EQ EXP 
+	EXP : EXP EQ EXP .  (reduce by rule 9)
+
+	PLUS	shift 9
+	TIMES	shift 8
+	SUB	shift 7
+	DIV	shift 6
+
+
+	.	reduce by rule 9
+
+
+state 13:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : EXP DIV EXP .  (reduce by rule 7)
+	EXP : EXP . EQ EXP 
+
+
+
+	.	reduce by rule 7
+
+
+state 14:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP SUB EXP .  (reduce by rule 5)
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : EXP . EQ EXP 
+
+	TIMES	shift 8
+	DIV	shift 6
+
+
+	.	reduce by rule 5
+
+
+state 15:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP TIMES EXP .  (reduce by rule 6)
+	EXP : EXP . DIV EXP 
+	EXP : EXP . EQ EXP 
+
+
+
+	.	reduce by rule 6
+
+
+state 16:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP PLUS EXP .  (reduce by rule 4)
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : EXP . EQ EXP 
+
+	TIMES	shift 8
+	DIV	shift 6
+
+
+	.	reduce by rule 4
+
+
+state 17:
+
+	EXP : LET DECL IN . EXP END 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 19
+
+	.	error
+
+
+state 18:
+
+	DECL : VAL ID . EQ EXP 
+
+	EQ	shift 20
+
+
+	.	error
+
+
+state 19:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : LET DECL IN EXP . END 
+	EXP : EXP . EQ EXP 
+
+	PLUS	shift 9
+	TIMES	shift 8
+	SUB	shift 7
+	DIV	shift 6
+	EQ	shift 5
+	END	shift 21
+
+
+	.	error
+
+
+state 20:
+
+	DECL : VAL ID EQ . EXP 
+
+	ID	shift 4
+	NUM	shift 3
+	LET	shift 2
+
+	EXP	goto 22
+
+	.	error
+
+
+state 21:
+
+	EXP : LET DECL IN EXP END .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
+state 22:
+
+	EXP : EXP . PLUS EXP 
+	EXP : EXP . SUB EXP 
+	EXP : EXP . TIMES EXP 
+	EXP : EXP . DIV EXP 
+	EXP : EXP . EQ EXP 
+	DECL : VAL ID EQ EXP .  (reduce by rule 1)
+
+	PLUS	shift 9
+	TIMES	shift 8
+	SUB	shift 7
+	DIV	shift 6
+	EQ	shift 5
+
+
+	.	reduce by rule 1
+
+
+state 23:
+
+
+	EOF	accept
+
+
+	.	error
+
+32 of 77 action table entries left after compaction
+10 goto table entries

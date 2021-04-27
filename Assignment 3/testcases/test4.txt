@@ -1,0 +1,5 @@
+let 
+	f = fn (x:int) : int => x PLUS 1 
+in
+	(f 3)
+end

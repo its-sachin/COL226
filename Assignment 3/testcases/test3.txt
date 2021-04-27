@@ -1,0 +1,7 @@
+if 3 GREATERTHAN 2 
+	then let X = TRUE in
+		X AND NOT X 
+		end
+	else TRUE
+fi;
+2 PLUS 3
