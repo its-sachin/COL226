@@ -48,24 +48,13 @@ type symbolTable = (id * value) list
 
 type typeTable = (id*types) list
 
+fun handleEx(a) = (TextIO.output(TextIO.stdOut,"\n"^a^"\n"); raise TypeError)
 
 fun strToConst a = 
 	case a of
 		"TRUE" => True
-		| "FALSE" => False
-		| _ => raise TypeError
-
-fun checkNum(a:exp):exp = 
-	case a of 
-		IbinopExp(oper, NumExp i1, NumExp i2) =>
-			(case oper of
-				Plus => NumExp(i1+i2)
-				| Minus => NumExp(i1-i2)
-				| Times => NumExp (i1*i2))
-
-		| UniopExp(Negate, NumExp i) => NumExp(~1*i)
-
-		| _ => raise TypeError
+		| "FALSE" => False 
+		| _ => handleEx( "Invalid Bool Type")
 
 
 
@@ -76,8 +65,10 @@ fun appendType(var:id, t:types, list:typeTable) = (var,t)::list
 fun findSymbol(var:id, env:symbolTable) =
     case List.find(fn (x, _) => x = var) env of
 		SOME (x, v)   => v
-	|   NONE => raise TypeError
+	|   NONE => handleEx( ("Unidentified variable " ^ var))
 	
+
+
 
 end
 

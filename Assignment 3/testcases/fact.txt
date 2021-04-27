@@ -1,0 +1,6 @@
+fun fact(x:int):int => 
+    if (x EQUALS 0) 
+        then 1
+    else x TIMES (fact x MINUS 1) 
+    fi;
+(fact 3);
