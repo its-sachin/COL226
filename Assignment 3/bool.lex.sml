@@ -261,8 +261,8 @@ let fun continue() = lex() in
               update("NUM", Int.toString(strToInt(yytext))));
               Tokens.NUM(strToInt(yytext), !pos, !pos) end
 | 15 => ((inc(pos,1);
-                update("SEMICOLON", ":"));                                          
-                Tokens.SEMICOLON(!pos,!pos))
+                update("COLON", ":"));                                          
+                Tokens.COLON(!pos,!pos))
 | 18 => ((inc(pos,2);
               update("DOUBLEARROW", "=>"));                                          
               Tokens.DOUBLEARROW(!pos,!pos))

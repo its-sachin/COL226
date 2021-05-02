@@ -1,0 +1,6 @@
+fun sumUpto(x:int):int => 
+    if (x EQUALS 1) then 1
+    else (sumUpto x MINUS 1) PLUS x 
+    fi;
+
+(sumUpto 10)

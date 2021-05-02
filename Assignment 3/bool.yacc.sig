@@ -8,7 +8,7 @@ val DOUBLEARROW:  'a * 'a -> (svalue,'a) token
 val ARROW:  'a * 'a -> (svalue,'a) token
 val FUN:  'a * 'a -> (svalue,'a) token
 val FN:  'a * 'a -> (svalue,'a) token
-val SEMICOLON:  'a * 'a -> (svalue,'a) token
+val COLON:  'a * 'a -> (svalue,'a) token
 val EQDEC:  'a * 'a -> (svalue,'a) token
 val END:  'a * 'a -> (svalue,'a) token
 val IN:  'a * 'a -> (svalue,'a) token

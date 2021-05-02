@@ -65,7 +65,7 @@ fun appendType(var:id, t:types, list:typeTable) = (var,t)::list
 fun findSymbol(var:id, env:symbolTable) =
     case List.find(fn (x, _) => x = var) env of
 		SOME (x, v)   => v
-	|   NONE => handleEx( ("Unidentified variable " ^ var))
+	|   NONE => handleEx( ("Unidentified variable \"" ^ var ^ "\""))
 	
 
 

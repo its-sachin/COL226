@@ -9,7 +9,7 @@
     ID of string| CONST of string | NOT | IMPLIES | AND | OR | XOR 
     | EQUALS | IF | THEN | ELSE | FI | RPAREN | LPAREN | TERM | EOF 
     | PLUS | MINUS | TIMES | NEGATE | GREATERTHAN | LESSTHAN | NUM of int 
-    | LET | IN | END | EQDEC | SEMICOLON | FN | FUN | ARROW | DOUBLEARROW
+    | LET | IN | END | EQDEC | COLON | FN | FUN | ARROW | DOUBLEARROW
     | INT | BOOL
 
 %nonterm 
@@ -26,10 +26,13 @@
 %right ELSE THEN IF IMPLIES NOT
 %right ARROW 
 
-%left EQUALS XOR OR AND
-%left MINUS PLUS
-%left GREATERTHAN LESSTHAN TIMES
 
+%left MINUS PLUS TIMES
+%left EQUALS XOR OR AND 
+
+%left GREATERTHAN LESSTHAN
+
+%nonassoc EQDEC
 
 %start START
 %verbose
@@ -54,10 +57,10 @@ exp: LET ID EQDEC exp  IN exp END
     | IF exp THEN exp ELSE exp FI
         (AST.IfExp(exp1,exp2,exp3))
 
-    | FN LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+    | FN LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp 
         (AST.FnAbs(ID,types1,types2,exp))
 
-    | FUN ID LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+    | FUN ID LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp 
         (AST.FunAbs(ID1,ID2,types1,types2,exp))
 
     | statement 

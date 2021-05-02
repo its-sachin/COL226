@@ -1,8 +1,0 @@
-You must follow these instructions before and during your demo for a timely evaluation process:
-* Each TA will publish a list of students. Only these students can fill the slot with the TA. You are not allowed to give demos to the TA of your choice.
-* The TA will ask you to download your submission from moodle and run these testcases.
-* Try all of the provided testcases before your demo slot. Keep a list of required changes ready, if any.
-* For every testcase with a valid parse tree, draw the parse tree with pen and paper before your demo and keep these images in your machine. The TA will look at these images and ask you related questions.
-* If you take more than allotted time in trying to figure out errors in your code or grammar-related questions, TAs may decide to penalize for it. Therefore, you are suggested to run the testcases beforehand.
-* You are not allowed to change your demo slots after you fill them. If you cannot give a demo during the chosen time,  inform the TA by email and request another slot.
-

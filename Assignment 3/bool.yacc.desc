@@ -94,7 +94,7 @@ state 5:
 
 state 6:
 
-	exp : FUN . ID LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FUN . ID LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp 
 
 	ID	shift 27
 
@@ -104,7 +104,7 @@ state 6:
 
 state 7:
 
-	exp : FN . LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FN . LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp 
 
 	LPAREN	shift 28
 
@@ -418,7 +418,7 @@ state 26:
 
 state 27:
 
-	exp : FUN ID . LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FUN ID . LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp 
 
 	LPAREN	shift 46
 
@@ -428,7 +428,7 @@ state 27:
 
 state 28:
 
-	exp : FN LPAREN . ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FN LPAREN . ID COLON types RPAREN COLON types DOUBLEARROW exp 
 
 	ID	shift 47
 
@@ -625,7 +625,7 @@ state 45:
 
 state 46:
 
-	exp : FUN ID LPAREN . ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FUN ID LPAREN . ID COLON types RPAREN COLON types DOUBLEARROW exp 
 
 	ID	shift 54
 
@@ -635,9 +635,9 @@ state 46:
 
 state 47:
 
-	exp : FN LPAREN ID . SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FN LPAREN ID . COLON types RPAREN COLON types DOUBLEARROW exp 
 
-	SEMICOLON	shift 55
+	COLON	shift 55
 
 
 	.	error
@@ -727,9 +727,9 @@ state 53:
 
 state 54:
 
-	exp : FUN ID LPAREN ID . SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FUN ID LPAREN ID . COLON types RPAREN COLON types DOUBLEARROW exp 
 
-	SEMICOLON	shift 58
+	COLON	shift 58
 
 
 	.	error
@@ -737,7 +737,7 @@ state 54:
 
 state 55:
 
-	exp : FN LPAREN ID SEMICOLON . types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FN LPAREN ID COLON . types RPAREN COLON types DOUBLEARROW exp 
 
 	LPAREN	shift 62
 	INT	shift 61
@@ -770,7 +770,7 @@ state 57:
 
 state 58:
 
-	exp : FUN ID LPAREN ID SEMICOLON . types RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FUN ID LPAREN ID COLON . types RPAREN COLON types DOUBLEARROW exp 
 
 	LPAREN	shift 62
 	INT	shift 61
@@ -784,7 +784,7 @@ state 58:
 state 59:
 
 	types : types . ARROW types 
-	exp : FN LPAREN ID SEMICOLON types . RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FN LPAREN ID COLON types . RPAREN COLON types DOUBLEARROW exp 
 
 	RPAREN	shift 67
 	ARROW	shift 66
@@ -873,7 +873,7 @@ state 64:
 state 65:
 
 	types : types . ARROW types 
-	exp : FUN ID LPAREN ID SEMICOLON types . RPAREN SEMICOLON types DOUBLEARROW exp 
+	exp : FUN ID LPAREN ID COLON types . RPAREN COLON types DOUBLEARROW exp 
 
 	RPAREN	shift 71
 	ARROW	shift 66
@@ -897,9 +897,9 @@ state 66:
 
 state 67:
 
-	exp : FN LPAREN ID SEMICOLON types RPAREN . SEMICOLON types DOUBLEARROW exp 
+	exp : FN LPAREN ID COLON types RPAREN . COLON types DOUBLEARROW exp 
 
-	SEMICOLON	shift 73
+	COLON	shift 73
 
 
 	.	error
@@ -939,9 +939,9 @@ state 70:
 
 state 71:
 
-	exp : FUN ID LPAREN ID SEMICOLON types RPAREN . SEMICOLON types DOUBLEARROW exp 
+	exp : FUN ID LPAREN ID COLON types RPAREN . COLON types DOUBLEARROW exp 
 
-	SEMICOLON	shift 77
+	COLON	shift 77
 
 
 	.	error
@@ -960,7 +960,7 @@ state 72:
 
 state 73:
 
-	exp : FN LPAREN ID SEMICOLON types RPAREN SEMICOLON . types DOUBLEARROW exp 
+	exp : FN LPAREN ID COLON types RPAREN COLON . types DOUBLEARROW exp 
 
 	LPAREN	shift 62
 	INT	shift 61
@@ -1000,7 +1000,7 @@ state 76:
 
 state 77:
 
-	exp : FUN ID LPAREN ID SEMICOLON types RPAREN SEMICOLON . types DOUBLEARROW exp 
+	exp : FUN ID LPAREN ID COLON types RPAREN COLON . types DOUBLEARROW exp 
 
 	LPAREN	shift 62
 	INT	shift 61
@@ -1014,7 +1014,7 @@ state 77:
 state 78:
 
 	types : types . ARROW types 
-	exp : FN LPAREN ID SEMICOLON types RPAREN SEMICOLON types . DOUBLEARROW exp 
+	exp : FN LPAREN ID COLON types RPAREN COLON types . DOUBLEARROW exp 
 
 	ARROW	shift 66
 	DOUBLEARROW	shift 80
@@ -1026,7 +1026,7 @@ state 78:
 state 79:
 
 	types : types . ARROW types 
-	exp : FUN ID LPAREN ID SEMICOLON types RPAREN SEMICOLON types . DOUBLEARROW exp 
+	exp : FUN ID LPAREN ID COLON types RPAREN COLON types . DOUBLEARROW exp 
 
 	ARROW	shift 66
 	DOUBLEARROW	shift 81
@@ -1037,7 +1037,7 @@ state 79:
 
 state 80:
 
-	exp : FN LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW . exp 
+	exp : FN LPAREN ID COLON types RPAREN COLON types DOUBLEARROW . exp 
 
 	ID	shift 15
 	CONST	shift 14
@@ -1060,7 +1060,7 @@ state 80:
 
 state 81:
 
-	exp : FUN ID LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW . exp 
+	exp : FUN ID LPAREN ID COLON types RPAREN COLON types DOUBLEARROW . exp 
 
 	ID	shift 15
 	CONST	shift 14
@@ -1083,7 +1083,7 @@ state 81:
 
 state 82:
 
-	exp : FN LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp .  (reduce by rule 6)
+	exp : FN LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp .  (reduce by rule 6)
 
 
 
@@ -1092,7 +1092,7 @@ state 82:
 
 state 83:
 
-	exp : FUN ID LPAREN ID SEMICOLON types RPAREN SEMICOLON types DOUBLEARROW exp .  (reduce by rule 7)
+	exp : FUN ID LPAREN ID COLON types RPAREN COLON types DOUBLEARROW exp .  (reduce by rule 7)
 
 
 

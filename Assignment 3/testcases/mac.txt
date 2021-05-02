@@ -1,0 +1,6 @@
+fun mac(n:int):int =>
+if NOT (n GREATERTHAN 100) then (mac (mac n PLUS 11))
+else n MINUS 10
+fi;
+
+(mac 91)

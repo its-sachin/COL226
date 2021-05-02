@@ -112,8 +112,8 @@ lb = [\n \r\n];
               Tokens.NUM(strToInt(yytext), !pos, !pos));
 
 ":"       =>  ((inc(pos,1);
-                update("SEMICOLON", ":"));                                          
-                Tokens.SEMICOLON(!pos,!pos));
+                update("COLON", ":"));                                          
+                Tokens.COLON(!pos,!pos));
 
 "=>"       => ((inc(pos,2);
               update("DOUBLEARROW", "=>"));                                          

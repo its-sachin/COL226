@@ -57,10 +57,14 @@ fun invoke instream =
 			let 
 				val done = ref false
 				val syntaxError = ref ""
-				val lexstream =  BoolParser.makeLexer (fn _ => if (!done) then "" else (done:=true; TextIO.input instream))
+				val lexstream =  BoolParser.makeLexer (fn _ =>( TextIO.input instream))
 				fun print_error (s,pos:int, _) =
-				(	if (!BoolLex.UserDeclarations.isLast = true) then (print(lexerRes ()); TextIO.output(TextIO.stdOut, !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n"))
-					else syntaxError := !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n")
+				(	if (!BoolLex.UserDeclarations.isLast = true andalso !done = false) then 
+					(done := true;
+					(* TextIO.output(TextIO.stdOut,"\nLexer output: \n");
+					print(lexerRes ());  *)
+					TextIO.output(TextIO.stdOut, "\n"^ !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n"))
+					else (syntaxError := !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n"))
 		in
 		    BoolParser.parse(0,lexstream,print_error,())
 		end
@@ -85,15 +89,28 @@ fun compile input =
 	end *)
 
 
-fun compile input =
+fun parse input =
 	let val parseRes = parseRes(readFile input)
 		val lexerRes = lexerRes()
 	in
-	if (!doneOnce = false) then (print(lexerRes))
-	else ()
+	(
+	(* TextIO.output(TextIO.stdOut,"\nLexer output: \n"); 
+	print(lexerRes); 
+	TextIO.output(TextIO.stdOut,"\n");  *)
+	parseRes)
 	end
 
-val parse = parseRes o readFile
+fun compile input = 
+	let val parsed = parse input
+	in
+	EVALUATOR.evalFile(parsed)
+	end
+
+fun printRes input =
+	let val compiled = compile input
+	in
+	TextIO.output(TextIO.stdOut, EVALUATOR.resToStr(compiled)^ "\n")
+	end
 
 val args = CommandLine.arguments()
 val a = case args of [] => ""
@@ -102,7 +119,7 @@ val a = case args of [] => ""
 
 val _ = 
 	if (a = "") then TextIO.output(TextIO.stdOut,"Enter the path of file.\n")
-	else (compile a)
+	else (printRes a)
 
  	
 

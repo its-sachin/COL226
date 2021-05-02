@@ -317,7 +317,7 @@ fn (T 0) => "ID"
   | (T 24) => "IN"
   | (T 25) => "END"
   | (T 26) => "EQDEC"
-  | (T 27) => "SEMICOLON"
+  | (T 27) => "COLON"
   | (T 28) => "FN"
   | (T 29) => "FUN"
   | (T 30) => "ARROW"
@@ -699,7 +699,7 @@ fun END (p1,p2) = Token.TOKEN (ParserData.LrTable.T 25,(
 ParserData.MlyValue.VOID,p1,p2))
 fun EQDEC (p1,p2) = Token.TOKEN (ParserData.LrTable.T 26,(
 ParserData.MlyValue.VOID,p1,p2))
-fun SEMICOLON (p1,p2) = Token.TOKEN (ParserData.LrTable.T 27,(
+fun COLON (p1,p2) = Token.TOKEN (ParserData.LrTable.T 27,(
 ParserData.MlyValue.VOID,p1,p2))
 fun FN (p1,p2) = Token.TOKEN (ParserData.LrTable.T 28,(
 ParserData.MlyValue.VOID,p1,p2))

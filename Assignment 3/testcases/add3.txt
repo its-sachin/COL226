@@ -1,0 +1,7 @@
+let x = fn (a:int):int->int->int => fn (b:int):int->int => fn (c:int):int => a PLUS b PLUS c
+in
+let y = 8
+in
+(x y 10 5)
+end
+end
