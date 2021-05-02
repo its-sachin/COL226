@@ -7,9 +7,9 @@ fun frog(n:int):int =>
 		else 
 			if n EQUALS 3 
 			then 4
-			else (frog n MINUS 1) + (frog n MINUS 2) + (frog n MINUS 3)
+			else (frog n MINUS 1) PLUS (frog n MINUS 2) PLUS (frog n MINUS 3)
 			fi
 		fi
-	fi
+	fi;
 
-(frog 6)
+(frog 3)

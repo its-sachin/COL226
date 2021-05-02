@@ -49,20 +49,24 @@ fun print(list) =
 			(* | x::xs => printR(xs,str^"\""^x^"\",") *)
 			| x::xs => printR(xs,str^x^",")
 		in
-		printR(list,"")
+		(TextIO.output(TextIO.stdOut,"\nLexer output: \n"); 
+		printR(list,""))
 		end
+
+fun handleErr(list) = ()
 
 
 fun invoke instream =
 			let 
 				val done = ref false
+				val dOnce = ref false
 				val syntaxError = ref ""
-				val lexstream =  BoolParser.makeLexer (fn _ =>( TextIO.input instream))
+				val lexstream =  BoolParser.makeLexer (fn _ =>if (!done) then "" else (done := true; TextIO.input instream))
 				fun print_error (s,pos:int, _) =
-				(	if (!BoolLex.UserDeclarations.isLast = true andalso !done = false) then 
-					(done := true;
-					(* TextIO.output(TextIO.stdOut,"\nLexer output: \n");
-					print(lexerRes ());  *)
+				(	if (!BoolLex.UserDeclarations.isLast = true andalso !dOnce = false) then 
+					(dOnce := true;
+					(* print(lexerRes ());  *)
+					handleErr(lexerRes());
 					TextIO.output(TextIO.stdOut, "\n"^ !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n"))
 					else (syntaxError := !syntaxError ^ "Syntax Error:" ^ (Int.toString (!BoolLex.UserDeclarations.line))^":"^(Int.toString pos) ^":"^s ^ "\n"))
 		in
@@ -75,7 +79,7 @@ fun parseRes(lexer) =
     	val (result, lexer) = invoke lexer
 		val (nextToken, lexer) = BoolParser.Stream.get lexer
     in
-		if (!BoolLex.UserDeclarations.isError = true) then raise LexerError
+		if (!BoolLex.UserDeclarations.isError = true) then ( raise LexerError)
         else (result)
     end
 		
@@ -90,14 +94,14 @@ fun compile input =
 
 
 fun parse input =
-	let val parseRes = parseRes(readFile input)
+	let val par = parseRes(readFile input)
 		val lexerRes = lexerRes()
 	in
 	(
 	(* TextIO.output(TextIO.stdOut,"\nLexer output: \n"); 
 	print(lexerRes); 
 	TextIO.output(TextIO.stdOut,"\n");  *)
-	parseRes)
+	par)
 	end
 
 fun compile input = 

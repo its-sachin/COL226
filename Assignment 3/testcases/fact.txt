@@ -7,5 +7,5 @@ fun fact(x:int):int =>
 
 let f = fn(x:int):int->int => fn (y:int):int => x PLUS y
 in
-(f 7 9) PLUS (fact 9)
+(f 7 NEGATE 9)
 end;

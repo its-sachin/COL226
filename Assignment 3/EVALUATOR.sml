@@ -94,28 +94,36 @@ and
 evalExp(e:exp, s:symbolTable):value =
     let 
 
-    fun tackleFree(e,t,s) = 
+    fun tackleFree(e:exp,i:id,change:value):exp = 
         (case e of 
         VarExp(i1) => 
-            (case List.find(fn (x) => x = i1) t of
-            SOME x   => e
-            | NONE => 
-                (case findSymbol(i1,s) of
-                IntVal(i2) => NumExp(i2)
+            if (i1 = i) then (
+                case change of
+                IntVal(c) => NumExp(c)
                 | BoolVal(c) => ConstExp(c)
-                | FunVal(i2,t1,t2,e1) => FnAbs(i2,t1,t2,e1)))
-        | UniopExp(oper,e1) => UniopExp(oper,tackleFree(e1,t,s))
-        | IbinopExp(oper,e1,e2) => IbinopExp(oper,tackleFree(e1,t,s),tackleFree(e2,t,s))
-        | FnAbs(i2,t1,t2,e1) => FnAbs(i2,t1,t2,tackleFree(e1,i2::t,s))
+                | FunVal(c,t1,t2,e1) => FnAbs(c,t1,t2,e1)
+            ) else e
+        | UniopExp(oper,e1) => UniopExp(oper,tackleFree(e1,i,change))
+        | BbinopExp(oper,e1,e2) => BbinopExp(oper,tackleFree(e1,i,change),tackleFree(e2,i,change))
+        | IbinopExp(oper,e1,e2) => IbinopExp(oper,tackleFree(e1,i,change),tackleFree(e2,i,change))
+        | FnAbs(i2,t1,t2,e1) => FnAbs(i2,t1,t2,tackleFree(e1,i,change))
         | FunAbs(_,_,_,_,_) => handleEx("Function declaration inside expression at \""^expToStr(e)^"\"")
-        | AppExp(e1,e2) => AppExp(tackleFree(e1,t,s), tackleFree(e2,t,s))
-        | LetExp(i2,e1,e2) => LetExp(i2,tackleFree(e1,t,s),tackleFree(e2,i2::t,s))
-        | IfExp(e1,e2,e3) => IfExp(tackleFree(e1,t,s),tackleFree(e2,t,s),tackleFree(e3,t,s))        
+        | AppExp(e1,e2) => AppExp(tackleFree(e1,i,change), tackleFree(e2,i,change))
+        | LetExp(i2,e1,e2) => LetExp(i2,tackleFree(e1,i,change),tackleFree(e2,i,change))
+        | IfExp(e1,e2,e3) => IfExp(tackleFree(e1,i,change),tackleFree(e2,i,change),tackleFree(e3,i,change))        
         | _ => e)
+
+
+
+    fun appendFree(v:value,i:id,change:value):value =
+        (case v of
+        FunVal(i1,t1,t2,e1) => FunVal(i1,t1,t2,tackleFree(e1,i,change))
+        | _ => v)
+
 
     fun checkExp(e,s) = 
     (
-        (* TextIO.output(TextIO.stdOut,"Symbol: "^tabelToStr(s)^"\n"); *)
+        (* TextIO.output(TextIO.stdOut,"Symbol: "^tabelToStr(s)^"\n\nS"); *)
     case e of
 	    NumExp(i) => IntVal(i)
         | VarExp(i) => 	findSymbol(i,s)
@@ -172,7 +180,7 @@ evalExp(e:exp, s:symbolTable):value =
             let val g = checkType(e1,initType(i,t1,s),s)
             in
                 if ( g= t2) 
-                then FunVal(i,t1,t2,tackleFree(e1,[i],s)) 
+                then FunVal(i,t1,t2,e1) 
                 else handleEx ("Type mismatch for fn abstraction at \"" ^ expToStr(e)^"\"\ngiven: [" ^typeToStr(g)^ "]\nexpected: [" ^ typeToStr(t2)^ "]")
             end
 
@@ -182,17 +190,20 @@ evalExp(e:exp, s:symbolTable):value =
             (* let val temp = checkType(e,initTypeEmp(s),s) in *)
                 (case checkExp(e1,s) of 
                 FunVal(id1,t11,t12,e11) =>
-                    (case checkExp(e2,s) of
+                    let val v2 = checkExp(e2,s)
+                    in
+                    (case v2 of
                     IntVal(i1) => if (t11 = Int) then 
-                        (checkExp(e11,appendID(id1,IntVal(i1),s)))
+                        (appendFree(checkExp(e11,appendID(id1,IntVal(i1),s)),id1,v2))
                         else handleEx ("Type mismatch for function application at \"" ^ expToStr(e)^"\"\nexpected: ["^ typeToStr(t11) ^"]\ngiven: [int]")
                     | BoolVal(c) => if (t11 = Bool) then 
-                        (checkExp(e11,appendID(id1,BoolVal(c),s)))
+                        (appendFree(checkExp(e11,appendID(id1,BoolVal(c),s)),id1,v2))
                         else handleEx ("Type mismatch for function application at \"" ^ expToStr(e)^"\"\nexpected: ["^ typeToStr(t11) ^"]\ngiven: [bool]")
                     | FunVal(id2,t21,t22,e21) => if (t11 = Arrow(t21,t22)) then
-                        (checkExp(e11,appendID(id1,FunVal(id2,t21,t22,e21),s)))
+                        (appendFree(checkExp(e11,appendID(id1,FunVal(id2,t21,t22,e21),s)),id1,v2))
                         else handleEx ("Type mismatch for function application at \"" ^ expToStr(e)^"\"\nexpected: ["^ typeToStr(t11) ^"]\ngiven: [" ^typeToStr(Arrow(t21,t22))^ "]")
                     )
+                    end
                 | _ => handleEx ("Function expected for application at \"" ^ expToStr(e)^"\""))
             (* end *)
             
@@ -449,7 +460,7 @@ tabelToStr(s:symbolTable) =
     case s of
         [] => ""
         | [(x,y)] => x^","^valToStr(y)
-        | (x,y)::xs  => x^","^valToStr(y)^" | "^tabelToStr(xs)
+        | (x,y)::xs  => x^","^valToStr(y)^"         |        "^tabelToStr(xs)
 
 and
 
@@ -457,7 +468,7 @@ typeTabelToStr(s:typeTable) =
     case s of
         [] => ""
         | [(x,y)] => x^","^typeToStr(y)
-        | (x,y)::xs  => x^","^typeToStr(y)^" | "^typeTabelToStr(xs)
+        | (x,y)::xs  => x^","^typeToStr(y)^"        |        "^typeTabelToStr(xs)
 
 
 end

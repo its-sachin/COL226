@@ -1,0 +1,16 @@
+fun general (term:int->int):(int->int)->((int)->((int->int->int)->(int->(int->int)))) =>
+    fn(next:int->int):(int)->((int->int->int)->(int->(int->int))) =>
+        fn(idval:int):(int->int->int)->(int->(int->int)) =>
+            fn(oper:int->int->int):int->(int->int) =>
+                fn(l:int):int->int =>
+                fn(u:int):int =>
+
+    if l GREATERTHAN u then idval 
+    else (oper (term l) (general term next idval oper (next l) u))
+    fi;
+
+fun apsum (a:int):int->(int->int) =>
+    fn(d:int):int->int =>
+        fn(n:int):int => (general (fn (x:int):int => x) (fn (x:int):int => x PLUS d) 0 (fn (x:int):int->int => fn (y:int):int => x PLUS y) a (a PLUS (n MINUS 1) TIMES d));
+
+(apsum 1 2 10)

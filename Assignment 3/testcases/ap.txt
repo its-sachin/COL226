@@ -1,0 +1,8 @@
+fun g (l:int):int->int =>
+    fn (u:int):int =>
+
+        if l GREATERTHAN u then 0
+        else l PLUS (g (l PLUS 1) u)
+        fi;
+
+(g 1 10)
