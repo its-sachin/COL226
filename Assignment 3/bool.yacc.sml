@@ -70,11 +70,11 @@ val table=let val actionRows =
 \\101\000\004\000\027\000\005\000\026\000\006\000\025\000\007\000\024\000\
 \\008\000\023\000\017\000\022\000\018\000\021\000\019\000\020\000\
 \\021\000\019\000\022\000\018\000\000\000\
-\\102\000\000\000\
-\\103\000\000\000\
+\\102\000\019\000\020\000\000\000\
+\\103\000\019\000\020\000\000\000\
 \\104\000\000\000\
-\\105\000\000\000\
-\\106\000\000\000\
+\\105\000\017\000\022\000\018\000\021\000\019\000\020\000\000\000\
+\\106\000\017\000\022\000\018\000\021\000\019\000\020\000\000\000\
 \\107\000\000\000\
 \\108\000\000\000\
 \\109\000\000\000\
@@ -99,9 +99,9 @@ val actionRowNumbers =
 \\003\000\003\000\003\000\003\000\
 \\003\000\003\000\029\000\015\000\
 \\006\000\020\000\057\000\000\000\
-\\001\000\008\000\056\000\050\000\
-\\049\000\048\000\047\000\046\000\
+\\001\000\008\000\056\000\046\000\
 \\045\000\044\000\043\000\042\000\
+\\050\000\049\000\048\000\047\000\
 \\040\000\030\000\007\000\021\000\
 \\002\000\059\000\058\000\060\000\
 \\055\000\002\000\022\000\016\000\
@@ -133,11 +133,11 @@ val gotoT =
 \\007\000\034\000\000\000\
 \\000\000\
 \\000\000\
-\\007\000\035\000\000\000\
-\\007\000\036\000\000\000\
-\\007\000\037\000\000\000\
-\\007\000\038\000\000\000\
-\\007\000\039\000\000\000\
+\\006\000\035\000\007\000\001\000\000\000\
+\\006\000\036\000\007\000\001\000\000\000\
+\\006\000\037\000\007\000\001\000\000\000\
+\\006\000\038\000\007\000\001\000\000\000\
+\\006\000\039\000\007\000\001\000\000\000\
 \\007\000\040\000\000\000\
 \\007\000\041\000\000\000\
 \\007\000\042\000\000\000\
@@ -467,7 +467,57 @@ end)
  in ( LrTable.NT 4, ( result, operation1left, operation1right), 
 rest671)
 end
-|  ( 15, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
+|  ( 15, ( ( _, ( MlyValue.operation operation2, _, operation2right))
+ :: _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  
+operation1 = operation1 ()
+ val  operation2 = operation2 ()
+ in (AST.IbinopExp(AST.Plus, operation1, operation2))
+end)
+ in ( LrTable.NT 5, ( result, operation1left, operation2right), 
+rest671)
+end
+|  ( 16, ( ( _, ( MlyValue.operation operation2, _, operation2right))
+ :: _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  
+operation1 = operation1 ()
+ val  operation2 = operation2 ()
+ in (AST.IbinopExp(AST.Minus, operation1, operation2))
+end)
+ in ( LrTable.NT 5, ( result, operation1left, operation2right), 
+rest671)
+end
+|  ( 17, ( ( _, ( MlyValue.operation operation2, _, operation2right))
+ :: _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  
+operation1 = operation1 ()
+ val  operation2 = operation2 ()
+ in (AST.IbinopExp(AST.Times, operation1, operation2))
+end)
+ in ( LrTable.NT 5, ( result, operation1left, operation2right), 
+rest671)
+end
+|  ( 18, ( ( _, ( MlyValue.operation operation2, _, operation2right))
+ :: _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  
+operation1 = operation1 ()
+ val  operation2 = operation2 ()
+ in (AST.BbinopExp(AST.Greaterthan, operation1, operation2))
+end)
+ in ( LrTable.NT 5, ( result, operation1left, operation2right), 
+rest671)
+end
+|  ( 19, ( ( _, ( MlyValue.operation operation2, _, operation2right))
+ :: _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
+rest671)) => let val  result = MlyValue.operation (fn _ => let val  
+operation1 = operation1 ()
+ val  operation2 = operation2 ()
+ in (AST.BbinopExp(AST.Lessthan, operation1, operation2))
+end)
+ in ( LrTable.NT 5, ( result, operation1left, operation2right), 
+rest671)
+end
+|  ( 20, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
  _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
 rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
 operation as operation1) = operation1 ()
@@ -477,7 +527,7 @@ end)
  in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 16, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
+|  ( 21, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
  _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
 rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
 operation as operation1) = operation1 ()
@@ -487,7 +537,7 @@ end)
  in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 17, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
+|  ( 22, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
  _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
 rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
 operation as operation1) = operation1 ()
@@ -497,62 +547,12 @@ end)
  in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
 )
 end
-|  ( 18, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
- _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
-rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
-operation as operation1) = operation1 ()
- val  (variable as variable1) = variable1 ()
- in (AST.BbinopExp(AST.Equals, operation, variable))
-end)
- in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
-)
-end
-|  ( 19, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
- _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
-rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
-operation as operation1) = operation1 ()
- val  (variable as variable1) = variable1 ()
- in (AST.IbinopExp(AST.Plus, operation, variable))
-end)
- in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
-)
-end
-|  ( 20, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
- _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
-rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
-operation as operation1) = operation1 ()
- val  (variable as variable1) = variable1 ()
- in (AST.IbinopExp(AST.Minus, operation, variable))
-end)
- in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
-)
-end
-|  ( 21, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
- _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
-rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
-operation as operation1) = operation1 ()
- val  (variable as variable1) = variable1 ()
- in (AST.IbinopExp(AST.Times, operation, variable))
-end)
- in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
-)
-end
-|  ( 22, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
- _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
-rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
-operation as operation1) = operation1 ()
- val  (variable as variable1) = variable1 ()
- in (AST.BbinopExp(AST.Greaterthan, operation, variable))
-end)
- in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
-)
-end
 |  ( 23, ( ( _, ( MlyValue.variable variable1, _, variable1right)) ::
  _ :: ( _, ( MlyValue.operation operation1, operation1left, _)) :: 
 rest671)) => let val  result = MlyValue.operation (fn _ => let val  (
 operation as operation1) = operation1 ()
  val  (variable as variable1) = variable1 ()
- in (AST.BbinopExp(AST.Lessthan, operation, variable))
+ in (AST.BbinopExp(AST.Equals, operation, variable))
 end)
  in ( LrTable.NT 5, ( result, operation1left, variable1right), rest671
 )

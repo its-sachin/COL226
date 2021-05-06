@@ -16,11 +16,11 @@ fun checkType(e:exp,t:typeTable,s:symbolTable):types=
         case oper of 
         Not => let val given = checkType(e1,t,s) in
             if (given = Bool) then Bool else 
-                handleEx ("Type mismatch for NOT at \"" ^ expToStr(e)^"\"\nexpected: [bool]")
+                handleEx ("Type mismatch for NOT at \"" ^ expToStr(e)^"\"\nexpected: [bool]\ngiven: ["^ typeToStr(given) ^"]")
             end
         | Negate => let val given = checkType(e1,t,s) in
             if (given = Int) then Int else 
-                handleEx ("Type mismatch for NEGATE at \"" ^ expToStr(e)^"\"\nexpected: [int]")
+                handleEx ("Type mismatch for NEGATE at \"" ^ expToStr(e)^"\"\nexpected: [int]\ngiven: ["^ typeToStr(given) ^"]")
             end
     )
 
@@ -123,14 +123,17 @@ evalExp(e:exp, s:symbolTable):value =
 
     fun checkExp(e,s) = 
     (
-        (* TextIO.output(TextIO.stdOut,"Symbol: "^tabelToStr(s)^"\n\nS"); *)
+        (* TextIO.output(TextIO.stdOut,"Symbol: "^tabelToStr(s)^"\n"); *)
     case e of
 	    NumExp(i) => IntVal(i)
         | VarExp(i) => 	findSymbol(i,s)
         | ConstExp(c) => BoolVal(c)
 
         | UniopExp(oper,e1) => 
-            (case checkExp(e1,s) of 
+
+        let val e1check = checkExp(e1,s)
+        in
+            (case e1check of 
             BoolVal(c) => 
                 (case oper of 
                     Not => BoolVal(boolNot(c))
@@ -141,40 +144,54 @@ evalExp(e:exp, s:symbolTable):value =
                     Not => 
                         handleEx ("Type mismatch for NOT at \"" ^ expToStr(e)^"\"\nexpected: [bool]\ngiven: [int]")
                     | Negate => IntVal(~1*i))
-            | _ => handleEx ("Type mismatch for " ^ uoperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [bool] or [int]" ))
-        
+            | _ => handleEx ("Type mismatch for " ^ uoperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [bool] or [int]\ngiven: ["^typeToStr(getType(e1check))^"]" ))
+        end
+
         | IbinopExp(oper, e1,e2) =>
-            (case checkExp(e1,s) of IntVal(i1) => 
-               (case checkExp(e2,s) of IntVal(i2) => IntVal(operateInt oper i1 i2)
-               | _ => handleEx ("Type mismatch for " ^ ioperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
-            | _ => handleEx ("Type mismatch for " ^ ioperToStr(oper)^ " at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
-        
-        | BbinopExp(oper, e1,e2) => 
+        let val e1check = checkExp(e1,s)
+        in
+            (case e1check of IntVal(i1) =>
+
+            let val e2check = checkExp(e2,s)
+            in 
+               (case e2check of IntVal(i2) => IntVal(operateInt oper i1 i2)
+               | _ => handleEx ("Type mismatch for " ^ ioperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]"^"\ngiven: ["^typeToStr(getType(e1check))^"]*["^typeToStr(getType(e2check))^"]" ))
+            end
+
+            | _ => handleEx ("Type mismatch for " ^ ioperToStr(oper)^ " at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]"^"\ngiven: ["^typeToStr(getType(e1check))^"]*[_]" ))
+        end
+
+        | BbinopExp(oper, e1,e2) =>
+
+        let val e1check = checkExp(e1,s)
+            val e2check = checkExp(e2,s)
+        in 
             (case oper of 
-                Greaterthan => (case checkExp(e1,s) of 
-                        IntVal(i1) => (case checkExp(e2,s) of 
+                Greaterthan => (case e1check of 
+                        IntVal(i1) => (case e2check of 
                             IntVal(i2) => if (i1>i2) then BoolVal(True) else BoolVal(False)
-                            | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
-                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
-                | Lessthan => (case checkExp(e1,s) of 
-                        IntVal(i1) => (case checkExp(e2,s) of 
+                            | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
+                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
+                | Lessthan => (case e1check of 
+                        IntVal(i1) => (case e2check of 
                             IntVal(i2) => if (i1<i2) then BoolVal(True) else BoolVal(False)
-                            | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
-                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
+                            | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
+                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
 
-                | Equals => (case checkExp(e1,s) of 
-                    IntVal(i1) => (case checkExp(e2,s) of 
+                | Equals => (case e1check of 
+                    IntVal(i1) => (case e2check of 
                         IntVal(i2) =>if (i1=i2) then BoolVal(True) else BoolVal(False)
-                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]" ))
-                    | BoolVal(c1) => (case checkExp(e2,s) of 
+                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
+                    | BoolVal(c1) => (case e2check of 
                         BoolVal(c2) => BoolVal(boolEquals(c1,c2))
-                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [bool]*[bool]" ))
-                    | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int] or [bool]*[bool]" ))
+                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [bool]*[bool]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
+                    | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [int]*[int] or [bool]*[bool]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
 
-                | _ => (case checkExp(e1,s) of BoolVal(c1) => 
-                            (case checkExp(e2,s) of BoolVal(c2) =>BoolVal(operateBool oper c1 c2)
-                            | _ => handleEx ("Type mismatch for " ^ boperToStr(oper)^ " at \"" ^ expToStr(e)^"\"\nexpected: [bool]*[bool]" ))
-                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [bool]*[bool]" )))
+                | _ => (case e1check of BoolVal(c1) => 
+                            (case e2check of BoolVal(c2) =>BoolVal(operateBool oper c1 c2)
+                            | _ => handleEx ("Type mismatch for " ^ boperToStr(oper)^ " at \"" ^ expToStr(e)^"\"\nexpected: [bool]*[bool]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" ))
+                        | _ => handleEx ("Type mismatch for " ^ boperToStr(oper) ^" at \"" ^ expToStr(e)^"\"\nexpected: [bool]*[bool]\ngiven: ["^typeToStr(getType(e1check)) ^"]*[" ^ typeToStr(getType(e2check)) ^"]" )))
+        end
         
         | FnAbs(i,t1,t2,e1) => 
             let val g = checkType(e1,initType(i,t1,s),s)
@@ -216,13 +233,14 @@ evalExp(e:exp, s:symbolTable):value =
         | IfExp(e1,e2,e3) => 
             let 
             val temp = checkType(e,initTypeEmp(s),s) 
+            val e1check = checkExp(e1,s)
             in
-                (case checkExp(e1,s) of
+                (case e1check of
                 BoolVal(c) => 
                     (case c of 
                     True => checkExp(e2,s)
                     | False => checkExp(e3,s))
-                | _ => handleEx("Type mismatch for if expression at if \""^expToStr(e1) ^"\" expected: [bool]")
+                | _ => handleEx("Type mismatch for if expression at if \""^expToStr(e1) ^"\" expected: [bool]\ngiven: [" ^ typeToStr(getType(e1check)) ^ "]")
                 )
             end
         )
@@ -431,8 +449,8 @@ expToStr(e:exp) =
     case e of
     NumExp(i) => Int.toString(i)
     | VarExp(i1) => i1
-    | ConstExp(i) => valToStr(BoolVal(i))
-    | UniopExp(oper,e1) => uoperToStr(oper)^" " ^expToStr(e)
+    | ConstExp(i) => (case i of True =>"TRUE" | _ => "FALSE")
+    | UniopExp(oper,e1) => uoperToStr(oper)^" " ^expToStr(e1)
     | IbinopExp(oper,e1,e2) => expToStr(e1)^" "^ioperToStr(oper) ^ " "^expToStr(e2)
     | BbinopExp(oper,e1,e2) => expToStr(e1)^" "^boperToStr(oper) ^ " "^expToStr(e2)
     | FnAbs(i,t1,t2,e1) => "fn("^i^":"^typeToStr(t1)^")"^": "^typeToStr(t2)^" => "^expToStr(e1)

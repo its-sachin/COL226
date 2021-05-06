@@ -1,2 +1,0 @@
- You may make it consistent for now by making all function calls like (func arg)
- Let us say for now that we will not make it this complicated. Do not worry about this for now. I will let you know the final decision by today. 

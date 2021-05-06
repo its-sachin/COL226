@@ -23,14 +23,15 @@
 %eop EOF
 %noshift EOF
 
+
+%left EQUALS XOR OR AND 
+%left GREATERTHAN LESSTHAN
+
+%left MINUS PLUS
+%left TIMES
+
 %right ELSE THEN IF IMPLIES NOT
 %right ARROW 
-
-
-%left MINUS PLUS TIMES
-%left EQUALS XOR OR AND 
-
-%left GREATERTHAN LESSTHAN
 
 %nonassoc EQDEC
 
@@ -88,7 +89,23 @@ statement: operation IMPLIES statement
         (operation)
 
 
-operation: operation AND variable 
+operation: operation PLUS operation 
+        (AST.IbinopExp(AST.Plus, operation1, operation2))
+
+    | operation MINUS operation 
+        (AST.IbinopExp(AST.Minus, operation1, operation2))
+
+    | operation TIMES operation 
+        (AST.IbinopExp(AST.Times, operation1, operation2))
+
+    | operation GREATERTHAN operation 
+        (AST.BbinopExp(AST.Greaterthan, operation1, operation2))
+
+    | operation LESSTHAN operation 
+        (AST.BbinopExp(AST.Lessthan, operation1, operation2))
+
+
+    | operation AND variable 
         (AST.BbinopExp(AST.And, operation, variable))
 
     | operation OR variable 
@@ -100,21 +117,6 @@ operation: operation AND variable
     | operation EQUALS variable 
         (AST.BbinopExp(AST.Equals, operation, variable))
 
-
-    | operation PLUS variable 
-        (AST.IbinopExp(AST.Plus, operation, variable))
-
-    | operation MINUS variable 
-        (AST.IbinopExp(AST.Minus, operation, variable))
-
-    | operation TIMES variable 
-        (AST.IbinopExp(AST.Times, operation, variable))
-
-    | operation GREATERTHAN variable 
-        (AST.BbinopExp(AST.Greaterthan, operation, variable))
-
-    | operation LESSTHAN variable 
-        (AST.BbinopExp(AST.Lessthan, operation, variable))
 
 
     | variable 

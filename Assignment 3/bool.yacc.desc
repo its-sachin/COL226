@@ -37,15 +37,15 @@ state 2:
 
 	statement : operation . IMPLIES statement 
 	statement : operation .  (reduce by rule 14)
+	operation : operation . PLUS operation 
+	operation : operation . MINUS operation 
+	operation : operation . TIMES operation 
+	operation : operation . GREATERTHAN operation 
+	operation : operation . LESSTHAN operation 
 	operation : operation . AND variable 
 	operation : operation . OR variable 
 	operation : operation . XOR variable 
 	operation : operation . EQUALS variable 
-	operation : operation . PLUS variable 
-	operation : operation . MINUS variable 
-	operation : operation . TIMES variable 
-	operation : operation . GREATERTHAN variable 
-	operation : operation . LESSTHAN variable 
 
 	IMPLIES	shift 25
 	AND	shift 24
@@ -231,7 +231,7 @@ state 15:
 
 state 16:
 
-	operation : operation LESSTHAN . variable 
+	operation : operation LESSTHAN . operation 
 
 	ID	shift 15
 	CONST	shift 14
@@ -240,14 +240,15 @@ state 16:
 	NEGATE	shift 10
 	NUM	shift 9
 
-	variable	goto 35
+	operation	goto 35
+	variable	goto 1
 
 	.	error
 
 
 state 17:
 
-	operation : operation GREATERTHAN . variable 
+	operation : operation GREATERTHAN . operation 
 
 	ID	shift 15
 	CONST	shift 14
@@ -256,14 +257,15 @@ state 17:
 	NEGATE	shift 10
 	NUM	shift 9
 
-	variable	goto 36
+	operation	goto 36
+	variable	goto 1
 
 	.	error
 
 
 state 18:
 
-	operation : operation TIMES . variable 
+	operation : operation TIMES . operation 
 
 	ID	shift 15
 	CONST	shift 14
@@ -272,14 +274,15 @@ state 18:
 	NEGATE	shift 10
 	NUM	shift 9
 
-	variable	goto 37
+	operation	goto 37
+	variable	goto 1
 
 	.	error
 
 
 state 19:
 
-	operation : operation MINUS . variable 
+	operation : operation MINUS . operation 
 
 	ID	shift 15
 	CONST	shift 14
@@ -288,14 +291,15 @@ state 19:
 	NEGATE	shift 10
 	NUM	shift 9
 
-	variable	goto 38
+	operation	goto 38
+	variable	goto 1
 
 	.	error
 
 
 state 20:
 
-	operation : operation PLUS . variable 
+	operation : operation PLUS . operation 
 
 	ID	shift 15
 	CONST	shift 14
@@ -304,7 +308,8 @@ state 20:
 	NEGATE	shift 10
 	NUM	shift 9
 
-	variable	goto 39
+	operation	goto 39
+	variable	goto 1
 
 	.	error
 
@@ -526,83 +531,136 @@ state 34:
 
 state 35:
 
-	operation : operation LESSTHAN variable .  (reduce by rule 23)
+	operation : operation . PLUS operation 
+	operation : operation . MINUS operation 
+	operation : operation . TIMES operation 
+	operation : operation . GREATERTHAN operation 
+	operation : operation . LESSTHAN operation 
+	operation : operation LESSTHAN operation .  (reduce by rule 19)
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
 
-
-
-	.	reduce by rule 23
-
-
-state 36:
-
-	operation : operation GREATERTHAN variable .  (reduce by rule 22)
-
-
-
-	.	reduce by rule 22
-
-
-state 37:
-
-	operation : operation TIMES variable .  (reduce by rule 21)
-
-
-
-	.	reduce by rule 21
-
-
-state 38:
-
-	operation : operation MINUS variable .  (reduce by rule 20)
-
-
-
-	.	reduce by rule 20
-
-
-state 39:
-
-	operation : operation PLUS variable .  (reduce by rule 19)
-
+	PLUS	shift 20
+	MINUS	shift 19
+	TIMES	shift 18
 
 
 	.	reduce by rule 19
 
 
-state 40:
+state 36:
 
-	operation : operation EQUALS variable .  (reduce by rule 18)
+	operation : operation . PLUS operation 
+	operation : operation . MINUS operation 
+	operation : operation . TIMES operation 
+	operation : operation . GREATERTHAN operation 
+	operation : operation GREATERTHAN operation .  (reduce by rule 18)
+	operation : operation . LESSTHAN operation 
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
 
+	PLUS	shift 20
+	MINUS	shift 19
+	TIMES	shift 18
 
 
 	.	reduce by rule 18
 
 
-state 41:
+state 37:
 
-	operation : operation XOR variable .  (reduce by rule 17)
+	operation : operation . PLUS operation 
+	operation : operation . MINUS operation 
+	operation : operation . TIMES operation 
+	operation : operation TIMES operation .  (reduce by rule 17)
+	operation : operation . GREATERTHAN operation 
+	operation : operation . LESSTHAN operation 
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
 
 
 
 	.	reduce by rule 17
 
 
-state 42:
+state 38:
 
-	operation : operation OR variable .  (reduce by rule 16)
+	operation : operation . PLUS operation 
+	operation : operation . MINUS operation 
+	operation : operation MINUS operation .  (reduce by rule 16)
+	operation : operation . TIMES operation 
+	operation : operation . GREATERTHAN operation 
+	operation : operation . LESSTHAN operation 
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
 
+	TIMES	shift 18
 
 
 	.	reduce by rule 16
 
 
-state 43:
+state 39:
 
-	operation : operation AND variable .  (reduce by rule 15)
+	operation : operation . PLUS operation 
+	operation : operation PLUS operation .  (reduce by rule 15)
+	operation : operation . MINUS operation 
+	operation : operation . TIMES operation 
+	operation : operation . GREATERTHAN operation 
+	operation : operation . LESSTHAN operation 
+	operation : operation . AND variable 
+	operation : operation . OR variable 
+	operation : operation . XOR variable 
+	operation : operation . EQUALS variable 
 
+	TIMES	shift 18
 
 
 	.	reduce by rule 15
+
+
+state 40:
+
+	operation : operation EQUALS variable .  (reduce by rule 23)
+
+
+
+	.	reduce by rule 23
+
+
+state 41:
+
+	operation : operation XOR variable .  (reduce by rule 22)
+
+
+
+	.	reduce by rule 22
+
+
+state 42:
+
+	operation : operation OR variable .  (reduce by rule 21)
+
+
+
+	.	reduce by rule 21
+
+
+state 43:
+
+	operation : operation AND variable .  (reduce by rule 20)
+
+
+
+	.	reduce by rule 20
 
 
 state 44:
@@ -1107,5 +1165,5 @@ state 84:
 
 	.	error
 
-90 of 336 action table entries left after compaction
-72 goto table entries
+98 of 344 action table entries left after compaction
+77 goto table entries
